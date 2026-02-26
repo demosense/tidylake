@@ -39,7 +39,7 @@ The key advantages are:
 
 For full setup, concepts, and end-to-end examples, go to the documentation:
 
-- [Read the docs](https://<org>.github.io/tidylake/) <!-- placeholder -->
+- [Read the docs](https://tidylake.taidy.io)
 
 ## Minimal Example
 
