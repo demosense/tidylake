@@ -1,0 +1,19 @@
+repos:
+  # (Optional) some common built-in checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: detect-aws-credentials          # flags committed AWS keys
+        args: ["--allow-missing-credentials"]
+
+
+  # Run your Taskfile lint check
+  - repo: local
+    hooks:
+      - id: task-lint-check
+        name: Task lint:check
+        entry: task lint:check
+        language: system
+        pass_filenames: false

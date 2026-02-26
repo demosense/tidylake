@@ -1,0 +1,3 @@
+data_product:
+  name: 'silver_customers'
+  script: 'silver_customers'

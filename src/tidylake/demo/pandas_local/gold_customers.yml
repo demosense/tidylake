@@ -1,0 +1,3 @@
+data_product:
+  name: 'gold_customers'
+  script: 'gold_customers'

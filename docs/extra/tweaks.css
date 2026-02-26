@@ -1,0 +1,18 @@
+.hide {
+    display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+img.index-header {
+  width: 50%;
+  max-width: 500px;
+}
+
+.text-emphasis {
+  font-size: 1rem;
+  font-weight: 300;
+  font-style: italic;
+}

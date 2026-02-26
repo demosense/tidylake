@@ -1,0 +1,12 @@
+tidylake:
+  name: Test Pandas Iceberg Local 
+  include_data_products:
+    - bronze_customers.yml
+    - silver_customers.yml
+
+  plugins:
+    compute_engine:
+      plugin_path: pandas_iceberg_compute_engine.py
+      plugin_class_name: PandasIcebergComputeEnginePlugin
+
+      warehouse_path: /tmp/warehouse

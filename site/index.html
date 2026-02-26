@@ -1,0 +1,1848 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://<org>.github.io/tidylake/">
+      
+      
+      
+        <link rel="next" href="installation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="img/favicon.webp">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Getting Started - tidylake</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Prompt:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Prompt";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="extra/tweaks.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#tidylake" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="tidylake" class="md-header__button md-logo" aria-label="tidylake" data-md-component="logo">
+      
+  <img src="img/favicon.webp" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            tidylake
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Getting Started
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/demosense/tidylake" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="tidylake" class="md-nav__button md-logo" aria-label="tidylake" data-md-component="logo">
+      
+  <img src="img/favicon.webp" alt="logo">
+
+    </a>
+    tidylake
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/demosense/tidylake" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-data-platform-balancing-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Data Platform Balancing Act
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Data Platform Balancing Act">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-traditional-approaches-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why traditional approaches fail:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-first-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your first project
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Your first project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-manifest-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Manifest File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-context-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Context File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-script-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Script File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repeat!
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tidylakes-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using tidylake's Tooling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using tidylake&#39;s Tooling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#introspect-the-lineage-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introspect the Lineage Graph
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execution-in-batch-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution in Batch Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-in-interactive-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development in Interactive Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next-steps-leveling-up-your-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps: Leveling Up Your Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Documentation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Concepts
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design-principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Context File
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="manifests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manifest Files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Script Files
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="sdk/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SDK
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugins
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Plugins
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="plugins/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plugin System Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="plugins/compute-engine/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Compute Engine Plugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples and Tutorials
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Examples and Tutorials
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Demos
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Complete Demos
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/demos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    demos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/pandas-local/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo: Pandas local
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/pandas-pyiceberg/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo: Pandas Pyiceberg
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demos/pyspark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo: Pyspark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    tidylake
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    tidylake
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/tidylake/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tidylake
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/tidy-lake-context/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TidyLakeContext
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/data-product/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DataProduct
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/compute-engine-plugin/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ComputeEnginePlugin
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-data-platform-balancing-act" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Data Platform Balancing Act
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Data Platform Balancing Act">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-traditional-approaches-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why traditional approaches fail:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#your-first-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Your first project
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Your first project">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-manifest-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Manifest File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-context-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Context File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-script-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Script File
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#repeat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repeat!
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-tidylakes-tooling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using tidylake's Tooling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using tidylake&#39;s Tooling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#introspect-the-lineage-graph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introspect the Lineage Graph
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execution-in-batch-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execution in Batch Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#development-in-interactive-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Development in Interactive Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#next-steps-leveling-up-your-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps: Leveling Up Your Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 class="hide" id="tidylake">tidylake</h1>
+<p class="text-center">
+
+    <div class="text-center">
+        <img class="index-header" src="./img/logo-tidylake.png" alt="Tidylake">
+    </div>
+
+    <p class="text-center">
+    <em>Managing your data lakehouse assets</em>
+    </p>
+
+    <img
+        src="./img/coverage.svg"
+    alt="coverage">
+
+    <a href="">
+        <img src="https://img.shields.io/badge/license-pending-blue" alt="license">
+    </a>
+</p>
+
+<!-- <p class="text-emphasis">
+  tidylake is a Python framework designed for efficiently manage your data lake(house) assets and processes
+  in a completely unopinionated way. It helps you implement best practices, you bring the code, data and logic.
+</p> -->
+
+<h2 id="the-data-platform-balancing-act">The Data Platform Balancing Act</h2>
+<p>Building a data platform is a constant struggle to balance three types of complexity:</p>
+<ul>
+<li><strong>Technical Stack:</strong> Managing storage, compute, and evolving tools.</li>
+<li><strong>Process:</strong> Handling orchestration, monitoring, and deployments.</li>
+<li><strong>People:</strong> Coordinating a diverse team—from Data Engineers and DevOps to Data Scientists and Governance leads.</li>
+</ul>
+<h3 id="why-traditional-approaches-fail">Why traditional approaches fail:</h3>
+<ul>
+<li>
+<p><strong>Too Engineering-Heavy:</strong> If you focus solely on complex orchestration frameworks, less technical users (Governance, Business Analysts) can’t contribute. This creates an engineering bottleneck that doesn't scale.</p>
+</li>
+<li>
+<p><strong>Too Governance-Heavy:</strong> If you rely on standalone documentation tools, they quickly become detached from the actual code. Syncing the two becomes an impossible manual task.</p>
+</li>
+</ul>
+<p><strong>tidylake</strong> provides the "common ground" for your data platform. Instead of choosing between code and documentation, <strong>tidylake</strong> connects them.</p>
+<p>We bridge the gap between governance documentation and process execution without forcing you to switch your favorite tools. It streamlines how you define assets, ensuring your metadata and your pipelines stay in perfect sync.</p>
+<!-- ## Why use tidylake
+
+1. **Tool agnosting framework**:
+tidylake only helps you define your assets and provide a non opinionated framework for the remaining part of the processes like, reading, transforming, storing or testing your data.
+
+2.  -->
+
+<h2 id="your-first-project">Your first project</h2>
+<p>Follow this minimal example to understand the <a href="design-principles/">core mechanics</a> of a tidylake project.</p>
+<p>In this guide, we will build a single <a href="design-principles/#data-product">data product</a>, the fundamental building block of tidylake. It is an abstraction that allows you to define where your data comes from and what it should look like (metadata), then "wire it up" to your actual processing logic using our helpers.</p>
+<div class="admonition note">
+<p class="admonition-title">The Philosophy: Organization over Interference</p>
+<p>tidylake is an unopinionated framework. By structuring your scripts and defining your data products, you unlock powerful tooling and automation. However, tidylake does not modify your data or add features to your processing engine (like <a href="https://pandas.pydata.org">pandas</a> in this example) or filesystem. It is designed for organization and governance, leaving the data processing entirely to you. Our <a href="plugins/overview/">plugin system</a> allows you for more flexibility and integration of your chosen framework.</p>
+</div>
+<h3 id="the-manifest-file">The Manifest File</h3>
+<p>Every data product begins with a <a href="manifests/">manifest</a>. This is a standardized YAML schema that acts as the "source of truth" for your metadata.</p>
+<div class="highlight"><span class="filename">silver_customers.yaml</span><pre><span></span><code><span class="nt">data_product</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;silver_customers&#39;</span><span class="w"> </span><span class="c1"># (1)</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Customer profile from the CRM database</span><span class="w">  </span>
+<span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;silver_customers&#39;</span><span class="w"> </span><span class="c1"># (2)</span>
+<span class="w">    </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="c1"># (3)</span>
+<span class="w">        </span><span class="nt">properties</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">customer_id</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;string&#39;</span>
+<span class="w">                </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Unique</span><span class="nv"> </span><span class="s">identifier</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">customer&#39;</span>
+<span class="w">            </span><span class="nt">customer_name</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;string&#39;</span>
+<span class="w">                </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Full</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">customer&#39;</span>
+<span class="w">            </span><span class="nt">customer_active</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;boolean&#39;</span>
+<span class="w">                </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Flag</span><span class="nv"> </span><span class="s">indicating</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">customer</span><span class="nv"> </span><span class="s">account</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">active&#39;</span>
+<span class="w">            </span><span class="nt">customer_city</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;string&#39;</span>
+<span class="w">                </span><span class="nt">desc</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;City</span><span class="nv"> </span><span class="s">where</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">customer</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">located&#39;</span>
+</code></pre></div>
+<ol>
+<li><strong>Identity</strong>: Reusable metadata used for documentation and CLI commands.</li>
+<li><strong>Binding</strong>: Links this metadata directly to the Python logic.</li>
+<li><strong>Contract</strong>: Used for data quality validation and automating table definitions in your data warehouse.</li>
+</ol>
+<h3 id="the-context-file">The Context File</h3>
+<p>Tidylake uses a global <a href="context/">context file</a> to discover which data products belong to your project. The following is a minimal example including the previous data product.</p>
+<div class="highlight"><pre><span></span><code><span class="nt">tidylake</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Hello World</span>
+<span class="w">  </span><span class="nt">include_data_products</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">silver_customers.yml</span>
+</code></pre></div>
+<h3 id="the-script-file">The Script File</h3>
+<p>This is where you implement your logic (reading, transforming, and storing data). Tidylake stays out of your way, letting you use standard Python.</p>
+<div class="highlight"><span class="filename">silver_customers.py</span><pre><span></span><code><span class="c1"># %% </span>
+<span class="c1"># (1)!</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">tidylake</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_or_create_context</span>
+
+<span class="n">data_product</span> <span class="o">=</span> <span class="n">get_or_create_context</span><span class="p">()</span><span class="o">.</span><span class="n">get_data_product</span><span class="p">(</span><span class="s2">&quot;silver_customers&quot;</span><span class="p">)</span> <span class="c1"># (2)!</span>
+
+<span class="c1"># %%</span>
+<span class="nd">@data_product</span><span class="o">.</span><span class="n">add_input</span><span class="p">()</span> <span class="c1"># (3)!</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bronze_customers</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;/tmp/bronze_customers&quot;</span><span class="p">)</span>
+
+<span class="n">df_bronze_customers</span> <span class="o">=</span> <span class="n">bronze_customers</span><span class="p">()</span>
+
+<span class="c1"># %%</span>
+<span class="n">df_silver_customers</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">df_bronze_customers</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;customer__active&quot;</span><span class="p">]]</span>
+    <span class="o">.</span><span class="n">assign</span><span class="p">(</span>
+        <span class="n">customer_city</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;customer_city&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+        <span class="n">customer_name</span><span class="o">=</span><span class="k">lambda</span> <span class="n">df</span><span class="p">:</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;customer_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">title</span><span class="p">(),</span>
+    <span class="p">)</span>
+    <span class="c1"># (4)!</span>
+
+<span class="c1"># %%</span>
+<span class="nd">@data_product</span><span class="o">.</span><span class="n">set_sink</span><span class="p">()</span> <span class="c1"># (5)!</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_silver_customers</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">df_silver_customers</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s2">&quot;/tmp/silver_customers&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<ol>
+<li><strong>Context Awareness:</strong> Works in both interactive (Notebooks) and batch (Production) modes.</li>
+<li><strong>Lineage:</strong> Automatically tracks where data comes from.</li>
+<li><strong>More Lineage:</strong> Automatically tracks dependencies with other data products</li>
+<li><strong>Freedom:</strong> Tidylake doesn't change how you write Pandas/Spark code.</li>
+<li><strong>Safety:</strong> Sinks can be disabled in development to prevent accidental data overwrites.</li>
+</ol>
+<h3 id="repeat">Repeat!</h3>
+<p>Scaling your project is simply a matter of repeating this three-step workflow for every new asset:</p>
+<ol>
+<li><strong>Define</strong> the schema and metadata in a manifest file.</li>
+<li><strong>Implement</strong> the logic in a script, linking it to the manifest.</li>
+<li><strong>Register</strong> the product in your context file.</li>
+</ol>
+<div class="admonition example">
+<p class="admonition-title">Run the complete example yourself</p>
+<p>The snippets above are simplified for clarity. You can find the full, runnable project—including the sample data and all five data products <a href="demos/pandas-local/">here</a>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">The Medallion Architecture</p>
+<p>In the following examples, you will see us using terms like <em>Bronze</em>, <em>Silver</em>, and <em>Gold</em>. While tidylake is architecture-agnostic, we recommend adhering to a methodology such as the <a href="https://www.databricks.com/glossary/medallion-architecture">medallion architecture</a>, as it is used along our documentation because it is a proven standard for organizing data products.</p>
+</div>
+<h3 id="using-tidylakes-tooling">Using tidylake's Tooling</h3>
+<p>Once your project is structured, tidylake unlocks powerful automation and safety features via its <a href="cli/">Command Line Interface (CLI)</a>.</p>
+<h4 id="introspect-the-lineage-graph">Introspect the Lineage Graph</h4>
+<p>Tidylake parses your scripts to build an internal Directed Acyclic Graph (DAG). It automatically detects dependencies by looking at which products are used as inputs for others.</p>
+<p>Use the <a href="cli/#list">tidylake list</a> command to see your data products in their correct execution order:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>tidylake<span class="w"> </span>list
+
+<span class="m">01</span>.<span class="w"> </span>bronze_customers
+<span class="m">02</span>.<span class="w"> </span>bronze_profile
+<span class="m">03</span>.<span class="w"> </span>silver_customers
+<span class="m">04</span>.<span class="w"> </span>gold_customers
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Automatic DAG Validation</p>
+<p>The order above is determined by script dependencies, not the order in your configuration file. Tidylake ensures the graph is valid and will fail early if it detects circular dependencies. Learn more about <a href="context/#dag">detecting data product dependencies</a>.</p>
+</div>
+<p>You can also generate a visual representation of your pipeline using <a href="https://mermaid.ai">Mermaid</a> syntax:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>run<span class="w"> </span>tidylake<span class="w"> </span>list<span class="w"> </span>--mermaid
+</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    bronze_customers["Bronze Customers"]
+    bronze_profile["Bronze Profile"]
+    silver_customers["Silver Customers"]
+    gold_customers["Gold Customers"]
+    bronze_customers --&gt; silver_customers
+    bronze_profile --&gt; silver_customers
+    silver_customers --&gt; gold_customers</code></pre>
+<h4 id="execution-in-batch-mode">Execution in Batch Mode</h4>
+<p>During testing, in production or in CI/CD environments, you will run the project in batch mode. This tells tidylake to execute the scripts in order and activates all Sinks to write data to your storage layer.</p>
+<p>Use the <a href="cli/#run">tidylake run</a> command to run the entire project or a specific subset:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>tidylake<span class="w"> </span>run
+
+⚡️<span class="w"> </span>Running<span class="w"> </span>data<span class="w"> </span>product:<span class="w"> </span>bronze_customers
+⚡️<span class="w"> </span>Running<span class="w"> </span>data<span class="w"> </span>product:<span class="w"> </span>bronze_profile
+⚡️<span class="w"> </span>Running<span class="w"> </span>data<span class="w"> </span>product:<span class="w"> </span>silver_customers
+⚡️<span class="w"> </span>Running<span class="w"> </span>data<span class="w"> </span>product:<span class="w"> </span>gold_customers
+</code></pre></div>
+<h4 id="development-in-interactive-mode">Development in Interactive Mode</h4>
+<p>One of the most powerful features of tidylake is its "<em>context awareness</em>." You can run the exact same scripts interactively (using IPython kernels, Jupyter notebooks, or VS Code interactive windows) without modification.</p>
+<p>When tidylake detects an interactive session, it shifts into safety mode:</p>
+<ul>
+<li><strong>Disabled Sinks:</strong> The <a href="scripts/#writing-data"><code>sink</code></a> functions are bypassed. You can run your script as many times as you like without accidentally overwriting production data or creating "spurious" files.</li>
+<li><strong>Quiet Logging:</strong> Production-level logging is silenced to keep your console clean for development.</li>
+</ul>
+<p>This allows you to develop logic interactively while retaining the exact same code that will eventually run in production as a scheduled batch job, see more by reading the (notebook vs script dilemma)[#batch-vs-interactive] design principle.</p>
+<div class="admonition tip">
+<p class="admonition-title">Agnostic to your environment</p>
+<p>While we use .py files with <a href="https://code.visualstudio.com/docs/python/jupyter-support-py#_jupyter-code-cells">vscode jupyter code cells</a> in this guide, tidylake works with any interactive Python environment. Remember, it’s about the methodology, not the IDE.</p>
+</div>
+<h3 id="next-steps-leveling-up-your-workflow">Next Steps: Leveling Up Your Workflow</h3>
+<p>You have now seen the core mechanics of tidylake: linking metadata to logic and managing execution contexts.</p>
+<p>However, there is much more to explore. You can continue through the guide in order (start with the <a href="design-principles/">core concepts guide</a>), or jump straight into the features that interest you most:</p>
+<ul>
+<li>Go beyond basic pandas, learn how to create a <a href="plugins/compute-engine/">compute engine plugin</a> to encapsulate I/O operations, enable <a href="plugins/compute-engine/#schema-automation">schema automation</a> for your data lake, or generate <a href="plugins/compute-engine/#synthetic-data">synthetic data</a> directly from your manifests for rapid testing.</li>
+<li><strong>(WIP)</strong> Discover how to implement and log data quality tests as a native part of your product lifecycle.</li>
+<li><strong>(WIP)</strong> See how to export your tidylake DAG and integrate it seamlessly with orchestration engines like Airflow, Dagster, or Prefect.</li>
+</ul>
+<p>You can also go straight to the <a href="demos/demos/">demos</a> to see examples of complete projects for a variety of frameworks.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © Taidy Innovación SL. 2025 to present.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["announce.dismiss", "content.tabs.link", "content.code.annotate", "content.code.copy", "content.code.select", "content.tooltips", "navigation.indexes", "navigation.paths", "navigation.sections", "navigation.tracking", "navigation.instant.preview", "toc.follow", "search.suggest", "search.highlight"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

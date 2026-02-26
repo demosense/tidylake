@@ -1,0 +1,15 @@
+data_product:
+  name: 'bronze_customers'
+  script: 'bronze_customers'
+  schema:
+    type: 'object'
+    properties:
+      customer__id:
+        type: 'string'
+      customer__name:
+        type: 'string'
+      customer__city:
+        type: 'string'
+      customer__active:
+        type: 'boolean'
+      

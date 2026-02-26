@@ -1,0 +1,5 @@
+---
+title: DataProduct
+---
+
+::: tidylake.DataProduct

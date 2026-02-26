@@ -1,0 +1,10 @@
+data_product:
+  name: 'bronze_profile'
+  script: 'bronze_profile'
+  schema:
+    type: 'object'
+    properties:
+      id:
+        type: 'string'
+      account:
+        type: 'string'

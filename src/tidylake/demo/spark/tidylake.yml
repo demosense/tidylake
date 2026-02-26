@@ -1,0 +1,16 @@
+tidylake:
+  name: Test Spark with compute plugin
+  include_data_products:
+    - bronze_customers.yml
+    - silver_customers.yml
+
+  plugins:
+    compute_engine:
+      plugin_path: spark_compute_engine.py
+      # plugin_module: tidylake.plugins.spark_compute_engine
+      plugin_class_name: SparkComputeEnginePlugin
+
+      spark_app_name: tidylake_spark
+      spark_sql_warehouse_dir: /tmp/warehouse
+      spark_connect_host: localhost
+      spark_connect_port: 15002

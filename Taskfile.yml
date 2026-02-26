@@ -1,0 +1,180 @@
+version: "3"
+
+dotenv: [".env"]
+
+# ------------------------------
+# Default Variables
+# ------------------------------
+vars:
+  STAGE: "" # Deployment stage (e.g., dev, staging, prod)
+  DEPLOY_ID: "" # Unique identifier for the deployment
+  AWS_PROFILE: "" # Optional AWS CLI profile
+  VENV: .venv
+  DOCS_SITE_DIR: site
+
+env:
+  UV_CACHE_DIR: .uv-cache
+
+tasks:
+  # ------------------------------
+  # Default task that lists available tasks
+  # ------------------------------
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  # ------------------------------
+  # Variable Validation
+  # ------------------------------
+  check-vars:
+    silent: true
+    cmds:
+      - |
+        if [ -z "{{.STAGE}}" ]; then
+          echo "❌ Missing required variable: STAGE"; exit 1;
+        fi
+        if [ -z "{{.DEPLOY_ID}}" ]; then
+          echo "❌ Missing required variable: DEPLOY_ID"; exit 1;
+        fi
+
+  # ------------------------------
+  # Package Management
+  # ------------------------------
+  pack:install:
+    desc: Install self package for tests
+    cmds:
+      - uv pip install -e .
+
+  # ------------------------------
+  # Environment & Dependencies
+  # -------------------------
+  deps:install:
+    desc: Create virtual environment and sync Python dependencies
+    cmds:
+      - uv venv --clear {{.VENV}}
+      - uv sync --all-groups
+      - uv run pre-commit install --hook-type pre-commit
+
+  # -------------------------
+  # Docs
+  # -------------------------
+  docs:serve:
+    desc: Serve the documentation site locally
+    cmds:
+      - uv run mkdocs serve --livereload
+
+  docs:build:
+    desc: Build static documentation site
+    cmds:
+      - uv run mkdocs build --clean --site-dir {{.DOCS_SITE_DIR}}
+
+  docs:build:github-pages:
+    desc: Build documentation artifact for GitHub Pages publishing
+    cmds:
+      - uv run mkdocs build --clean --strict --site-dir {{.DOCS_SITE_DIR}}
+
+
+  # ------------------------------
+  # Demo Pipelines
+  # ------------------------------
+  demo:pandas:local:
+    desc: Launch pandas demo locally
+    dir: src/tidylake/demo/pandas_local
+    cmds:
+      - uv run tidylake list
+      - uv run tidylake list --mermaid
+      - uv run tidylake run
+      - uv run tidylake run --data-product gold_customers
+
+  demo:pandas:iceberg:local:
+    desc: Launch pandas + Iceberg demo locally
+    dir: src/tidylake/demo/pandas_iceberg_local
+    cmds:
+      - uv run tidylake list
+      - uv run tidylake schema diff
+      - uv run tidylake schema update --commit
+      - uv run tidylake run
+
+  demo:spark:
+    desc: Launch Spark demo (requires Spark Connect)
+    dir: src/tidylake/demo/spark
+    cmds:
+      - task: spark:start
+      - uv run tidylake list
+      - uv run tidylake list --mermaid
+      - uv run tidylake schema diff
+      - uv run tidylake schema update --commit
+      - uv run tidylake run
+      - uv run tidylake run --data-product gold_customers
+      - task: spark:stop
+
+  demo:
+    desc: Run all demos
+    cmds:
+      - task: demo:pandas:local
+      - task: demo:spark
+
+  # ------------------------------
+  #  Spark Services Control
+  # ------------------------------
+
+  spark:start:
+    desc: "Run Spark Connect service"
+    cmds:
+      - docker compose up -d spark-connect
+    silent: true
+
+  spark:stop:
+    desc: "Stop Spark Connect service"
+    cmds:
+      - docker compose down spark-connect
+    silent: true
+
+  # ------------------------------
+  # Code Quality & Unit Tests
+  # ------------------------------
+  test:unit:
+    desc: Run unit test suite
+    cmds:
+      - uv run pytest tests/unit
+
+  test:integration:
+    desc: Run integration test suite
+    cmds:
+      - uv run pytest tests/integration
+
+  test:acceptance:
+    desc: Run acceptance test suite
+    cmds:
+      - uv run pytest tests/acceptance
+
+  test:run:
+    desc: Run pytest with coverage report on the src folder
+    vars:
+      TEST_DIR: tests
+      COV_DIR: src
+      BADGE_DIR: docs/img
+      # Set PARALLEL=true to enable pytest-xdist auto parallelism
+      PAR_FLAG: "{{if .PARALLEL}}-n auto{{end}}"
+      # Pass BADGE=true to generate docs/coverage.svg
+      BADGE: '{{ .BADGE | default "false" }}'
+    cmds:
+      - uv run pytest -vsx --cov={{.COV_DIR}} --cov-report=term {{.PAR_FLAG}} {{.TEST_DIR}}
+      # Optionally generate/update the coverage badge in docs/
+      - |
+        if [ "{{.BADGE}}" = "true" ]; then
+          uv run coverage-badge -o {{.BADGE_DIR}}/coverage.svg -f
+        fi
+
+  lint:check:
+    desc: "Run linters and formatters in check mode"
+    cmds:
+      - uv run ruff check
+      - uv run ruff format --check
+
+  lint:format:
+    desc: "Format code using ruff"
+    cmds:
+      - uv run ruff format
+      - uv run ruff check --fix

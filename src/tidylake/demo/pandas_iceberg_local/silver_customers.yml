@@ -1,0 +1,14 @@
+data_product:
+  name: 'silver_customers'
+  script: 'silver_customers'
+  schema:
+    type: 'object'
+    properties:
+      customer_id:
+        type: 'string'
+      customer_name:
+        type: 'string'
+      customer_active:
+        type: 'boolean'
+      customer_city:
+        type: 'string'

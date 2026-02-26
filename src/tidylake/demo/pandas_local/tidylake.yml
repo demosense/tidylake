@@ -1,0 +1,7 @@
+tidylake:
+  name: Test Pandas Local
+  include_data_products:
+    - bronze_customers.yml
+    - bronze_profile.yml
+    - silver_customers.yml
+    - gold_customers.yml

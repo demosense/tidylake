@@ -1,0 +1,18 @@
+data_product:
+  name: 'bronze_customers'
+  script: 'bronze_customers'
+  schema:
+    type: 'object'
+    properties:
+      id:
+        type: 'string'
+        desc: 'Unique identifier for the customer'
+      name:
+        type: 'string'
+        desc: 'Full name of the customer'
+      active:
+        type: 'boolean'
+        desc: 'Flag indicating if the customer account is active'
+      city:
+        type: 'string'
+        desc: 'City where the customer is located'

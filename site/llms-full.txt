@@ -1,0 +1,1142 @@
+# tidylake
+
+Long description of my project.
+
+# Summary of the library
+
+# tidylake
+
+*Managing your data lakehouse assets*
+
+## The Data Platform Balancing Act
+
+Building a data platform is a constant struggle to balance three types of complexity:
+
+- **Technical Stack:** Managing storage, compute, and evolving tools.
+- **Process:** Handling orchestration, monitoring, and deployments.
+- **People:** Coordinating a diverse team—from Data Engineers and DevOps to Data Scientists and Governance leads.
+
+### Why traditional approaches fail:
+
+- **Too Engineering-Heavy:** If you focus solely on complex orchestration frameworks, less technical users (Governance, Business Analysts) can’t contribute. This creates an engineering bottleneck that doesn't scale.
+- **Too Governance-Heavy:** If you rely on standalone documentation tools, they quickly become detached from the actual code. Syncing the two becomes an impossible manual task.
+
+**tidylake** provides the "common ground" for your data platform. Instead of choosing between code and documentation, **tidylake** connects them.
+
+We bridge the gap between governance documentation and process execution without forcing you to switch your favorite tools. It streamlines how you define assets, ensuring your metadata and your pipelines stay in perfect sync.
+
+## Your first project
+
+Follow this minimal example to understand the [core mechanics](https://%3Corg%3E.github.io/tidylake/design-principles/index.md) of a tidylake project.
+
+In this guide, we will build a single [data product](https://%3Corg%3E.github.io/tidylake/design-principles/#data-product), the fundamental building block of tidylake. It is an abstraction that allows you to define where your data comes from and what it should look like (metadata), then "wire it up" to your actual processing logic using our helpers.
+
+The Philosophy: Organization over Interference
+
+tidylake is an unopinionated framework. By structuring your scripts and defining your data products, you unlock powerful tooling and automation. However, tidylake does not modify your data or add features to your processing engine (like [pandas](https://pandas.pydata.org) in this example) or filesystem. It is designed for organization and governance, leaving the data processing entirely to you. Our [plugin system](https://%3Corg%3E.github.io/tidylake/plugins/overview/index.md) allows you for more flexibility and integration of your chosen framework.
+
+### The Manifest File
+
+Every data product begins with a [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md). This is a standardized YAML schema that acts as the "source of truth" for your metadata.
+
+silver_customers.yaml
+
+```
+data_product:
+    name: 'silver_customers' # (1)
+    description: Customer profile from the CRM database  
+    script: 'silver_customers' # (2)
+    schema: # (3)
+        properties:
+            customer_id:
+                type: 'string'
+                desc: 'Unique identifier for the customer'
+            customer_name:
+                type: 'string'
+                desc: 'Full name of the customer'
+            customer_active:
+                type: 'boolean'
+                desc: 'Flag indicating if the customer account is active'
+            customer_city:
+                type: 'string'
+                desc: 'City where the customer is located'
+```
+
+1. **Identity**: Reusable metadata used for documentation and CLI commands.
+1. **Binding**: Links this metadata directly to the Python logic.
+1. **Contract**: Used for data quality validation and automating table definitions in your data warehouse.
+
+### The Context File
+
+Tidylake uses a global [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) to discover which data products belong to your project. The following is a minimal example including the previous data product.
+
+```
+tidylake:
+  name: Hello World
+  include_data_products:
+    - silver_customers.yml
+```
+
+### The Script File
+
+This is where you implement your logic (reading, transforming, and storing data). Tidylake stays out of your way, letting you use standard Python.
+
+silver_customers.py
+
+```
+# %% 
+# (1)!
+import pandas as pd
+
+from tidylake import get_or_create_context
+
+data_product = get_or_create_context().get_data_product("silver_customers") # (2)!
+
+# %%
+@data_product.add_input() # (3)!
+def bronze_customers():
+    return pd.read_parquet("/tmp/bronze_customers")
+
+df_bronze_customers = bronze_customers()
+
+# %%
+df_silver_customers = (
+    df_bronze_customers.loc[lambda df: df["customer__active"]]
+    .assign(
+        customer_city=lambda df: df["customer_city"].str.upper(),
+        customer_name=lambda df: df["customer_name"].str.title(),
+    )
+    # (4)!
+
+# %%
+@data_product.set_sink() # (5)!
+def write_silver_customers():
+    return df_silver_customers.to_parquet("/tmp/silver_customers", index=False)
+```
+
+1. **Context Awareness:** Works in both interactive (Notebooks) and batch (Production) modes.
+1. **Lineage:** Automatically tracks where data comes from.
+1. **More Lineage:** Automatically tracks dependencies with other data products
+1. **Freedom:** Tidylake doesn't change how you write Pandas/Spark code.
+1. **Safety:** Sinks can be disabled in development to prevent accidental data overwrites.
+
+### Repeat!
+
+Scaling your project is simply a matter of repeating this three-step workflow for every new asset:
+
+1. **Define** the schema and metadata in a manifest file.
+1. **Implement** the logic in a script, linking it to the manifest.
+1. **Register** the product in your context file.
+
+Run the complete example yourself
+
+The snippets above are simplified for clarity. You can find the full, runnable project—including the sample data and all five data products [here](https://%3Corg%3E.github.io/tidylake/demos/pandas-local/index.md).
+
+The Medallion Architecture
+
+In the following examples, you will see us using terms like *Bronze*, *Silver*, and *Gold*. While tidylake is architecture-agnostic, we recommend adhering to a methodology such as the [medallion architecture](https://www.databricks.com/glossary/medallion-architecture), as it is used along our documentation because it is a proven standard for organizing data products.
+
+### Using tidylake's Tooling
+
+Once your project is structured, tidylake unlocks powerful automation and safety features via its [Command Line Interface (CLI)](https://%3Corg%3E.github.io/tidylake/cli/index.md).
+
+#### Introspect the Lineage Graph
+
+Tidylake parses your scripts to build an internal Directed Acyclic Graph (DAG). It automatically detects dependencies by looking at which products are used as inputs for others.
+
+Use the [tidylake list](https://%3Corg%3E.github.io/tidylake/cli/#list) command to see your data products in their correct execution order:
+
+```
+uv run tidylake list
+
+01. bronze_customers
+02. bronze_profile
+03. silver_customers
+04. gold_customers
+```
+
+Automatic DAG Validation
+
+The order above is determined by script dependencies, not the order in your configuration file. Tidylake ensures the graph is valid and will fail early if it detects circular dependencies. Learn more about [detecting data product dependencies](https://%3Corg%3E.github.io/tidylake/context/#dag).
+
+You can also generate a visual representation of your pipeline using [Mermaid](https://mermaid.ai) syntax:
+
+```
+uv run tidylake list --mermaid
+```
+
+```
+flowchart TD
+    bronze_customers["Bronze Customers"]
+    bronze_profile["Bronze Profile"]
+    silver_customers["Silver Customers"]
+    gold_customers["Gold Customers"]
+    bronze_customers --> silver_customers
+    bronze_profile --> silver_customers
+    silver_customers --> gold_customers
+```
+
+#### Execution in Batch Mode
+
+During testing, in production or in CI/CD environments, you will run the project in batch mode. This tells tidylake to execute the scripts in order and activates all Sinks to write data to your storage layer.
+
+Use the [tidylake run](https://%3Corg%3E.github.io/tidylake/cli/#run) command to run the entire project or a specific subset:
+
+```
+$ tidylake run
+
+⚡️ Running data product: bronze_customers
+⚡️ Running data product: bronze_profile
+⚡️ Running data product: silver_customers
+⚡️ Running data product: gold_customers
+```
+
+#### Development in Interactive Mode
+
+One of the most powerful features of tidylake is its "*context awareness*." You can run the exact same scripts interactively (using IPython kernels, Jupyter notebooks, or VS Code interactive windows) without modification.
+
+When tidylake detects an interactive session, it shifts into safety mode:
+
+- **Disabled Sinks:** The [`sink`](https://%3Corg%3E.github.io/tidylake/scripts/#writing-data) functions are bypassed. You can run your script as many times as you like without accidentally overwriting production data or creating "spurious" files.
+- **Quiet Logging:** Production-level logging is silenced to keep your console clean for development.
+
+This allows you to develop logic interactively while retaining the exact same code that will eventually run in production as a scheduled batch job, see more by reading the (notebook vs script dilemma)[#batch-vs-interactive] design principle.
+
+Agnostic to your environment
+
+While we use .py files with [vscode jupyter code cells](https://code.visualstudio.com/docs/python/jupyter-support-py#_jupyter-code-cells) in this guide, tidylake works with any interactive Python environment. Remember, it’s about the methodology, not the IDE.
+
+### Next Steps: Leveling Up Your Workflow
+
+You have now seen the core mechanics of tidylake: linking metadata to logic and managing execution contexts.
+
+However, there is much more to explore. You can continue through the guide in order (start with the [core concepts guide](https://%3Corg%3E.github.io/tidylake/design-principles/index.md)), or jump straight into the features that interest you most:
+
+- Go beyond basic pandas, learn how to create a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md) to encapsulate I/O operations, enable [schema automation](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation) for your data lake, or generate [synthetic data](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data) directly from your manifests for rapid testing.
+- **(WIP)** Discover how to implement and log data quality tests as a native part of your product lifecycle.
+- **(WIP)** See how to export your tidylake DAG and integrate it seamlessly with orchestration engines like Airflow, Dagster, or Prefect.
+
+You can also go straight to the [demos](https://%3Corg%3E.github.io/tidylake/demos/demos/index.md) to see examples of complete projects for a variety of frameworks.
+# Detailed Instructions
+
+Tidylake's CLI can help you manage and automate your project, as al alternative you can also interact directly from python using the [SDK](https://%3Corg%3E.github.io/tidylake/sdk/index.md).
+
+## Basic commands
+
+These commands need to be launched from a tidylake project, for that you must create a valid [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) that points to one or more data product [manifest files](https://%3Corg%3E.github.io/tidylake/manifests/index.md).
+
+Every command looks for a `tidylake.yml` file on the root folder of your project, but you can modify this path with the `--file` argument.
+
+### list
+
+Lists the defined data products by following the internal [DAG ordering](https://%3Corg%3E.github.io/tidylake/context/#dag). Several options can be configured to obtain richer representation of the graph to improve visualization or include in documentations.
+
+```
+Usage: tidylake list [OPTIONS]
+
+ Display pipeline structure and visualization.
+
+ Args:     file: Path to the configuration YAML file.     mermaid: Generate Mermaid diagram output.     textual: Launch interactive terminal UI viewer.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --file           TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                                            │
+│ --mermaid              Generate Mermaid diagram                                                                                                                    │
+│ --textual              Open Textual viewer                                                                                                                         │
+│ --help                 Show this message and exit.                                                                                                                 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+### run
+
+Runs data products scripts in order, this is meant for testing with smaller sets of data or to manage very simple projects that do not require additional orchestration. Can be configured to start and filter subsets of the graph to test only required parts of the process.
+
+This package is not an orchestration tool
+
+We didn't design tidylake as a replacement for orchestration, there are many important functionalities that the package will never cover in the base functionality that should be provided from specialized tools via plugins or by integrating the project with the SDK. Use this command to test and automate early stage projects but plan for a future integration of an orchestration tool when you need to scale things up.
+
+```
+uv run tidylake run --help
+
+ Usage: tidylake run [OPTIONS]
+
+ Execute pipeline or individual data product.
+
+ Args:     file: Path to the configuration YAML file.     data product: Name of specific data product to execute. If None, runs entire pipeline.     continue_run:
+ Continue execution from the last completed data product.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --file                                 TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                      │
+│ --data-product                         TEXT  Specific data product to run                                                                                          │
+│ --continue-run    --no-continue-run          Continue from the last data product [default: no-continue-run]                                                        │
+│ --help                                       Show this message and exit.                                                                                           │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+### init
+
+Create an scaffold project by seeding base files and configuration. Comes with different flavours but they can be easily adapted to other engines.
+
+```
+uv run tidylake init --help
+
+ Usage: tidylake init [OPTIONS]
+
+ Initialize a new project from demo template.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --name          TEXT  Project name [default: my_tidylake_project]                                                                                                  │
+│ --engine        TEXT  Engine type: pandas, spark, iceberg [default: pandas]                                                                                        │
+│ --help                Show this message and exit.                                                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
+
+## Compute Engine commands
+
+This commands are only available when a compute engine has been correctly configured as they interact with catalog and storage systems that are not native to the library. These are meant to encapsulate and abstract under a common framework tasks are are usually repetitive in the management of datalakes.
+
+### schema diff
+
+Prints the differences between the schema in the manifest file and the configured catalog. It uses an intermediate abstraction for data types so your workflow is invariant across projects.
+
+```
+uv run tidylake schema diff --help
+
+ Usage: tidylake schema diff [OPTIONS]
+
+ Show schema differences between defined and catalog schemas.
+
+ Args:     file: Path to the configuration YAML file.     data_product: Name of specific data product to check. If None, checks all data products.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --file                TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                                       │
+│ --data-product        TEXT  Specific data product to check                                                                                                         │
+│ --help                      Show this message and exit.                                                                                                            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+### schema update
+
+Run schema modification in your catalog based on the differences between the manifest file and the schema that is already defined in your catalog. Please use the command in dry run mode and avoid calling `commit` unintentionally as the results can be destructive depending on your compute and storage engine.
+
+```
+uv run tidylake schema update --help
+
+ Usage: tidylake schema update [OPTIONS]
+
+ Update schema definitions to match catalog schemas.
+
+ Args:     file: Path to the configuration YAML file.     data_product: Name of specific data product to update. If None, updates all data products.     commit:
+ Apply changes to schema files. If False, runs in dry-run mode.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --file                           TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                            │
+│ --data-product                   TEXT  Specific data product to update                                                                                             │
+│ --commit          --no-commit          Commit changes [default: no-commit]                                                                                         │
+│ --help                                 Show this message and exit.                                                                                                 │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+### peek
+
+Renders a sample of the real dataset by accesing the underlying compute engine. This command is optional during the plugin definition as it can pose a data security risk in some scenarios.
+
+```
+ uv run tidylake peek --help
+
+ Usage: tidylake peek [OPTIONS]
+
+ Preview data product output data without executing the pipeline.
+
+ Args:     file: Path to the configuration YAML file.     data_product: Name of specific data product to preview.
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --file                TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                                       │
+│ --data-product        TEXT  Specific data product to run                                                                                                           │
+│ --help                      Show this message and exit.                                                                                                            │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+As established in our [getting started](https://%3Corg%3E.github.io/tidylake/index.md) guide, the primary objective of tidylake is to solve the **Data Platform Balancing Act**.
+
+We built tidylake based on lessons learned from countless data pipeline projects and after testing a myriad of [other frameworks](#alternatives). This methodology isn't just about a specific tool; it’s a set of principles for building and maintaining a sustainable Data Lake (or Lakehouse), regardless of your chosen framework or infrastructure.
+
+## Encapsulating the data product lifecycle
+
+The term **data product** has been defined extensively and is often categorized into three distinct "waves" of meaning:
+
+- **The "Functional" Definition (DJ Patil, 2012)**: In his seminal O’Reilly book Data Jujitsu, DJ defined it as "a product that facilitates an end goal through the use of data."
+- **The "Architectural" Definition (Zhamak Dehghani, 2019)**: In the original Data Mesh principles, Dehghani treats it as an "architectural quantum." She defines it not just as a dataset, but as a self-contained unit that includes the data, the code (pipelines/transformation), the metadata, and the infrastructure (access ports).
+- **The "Operational" Definition (Industry Standard):** Modern analyst firms like Gartner or Mckinsey often define a data product as a "curated set of data, metadata, and semantics" designed to be immediately useful for specific business objectives. Among practitioners focusing on reliability, a data product is defined by its contracts and observability. Here, a product isn't a product unless it has a designated owner, a clear consumer base, and measurable "health" metrics.
+
+When building tidylake, we chose this term intentionally. We aren't just building datasets; we are managing the full lifecycle of data by unifying:
+
+1. **Code:** Logic to transform raw inputs into refined outputs.
+1. **Metadata:** That explains what the data means and how it should be used.
+1. **Contracts:** Explicit definitions that combine strict typing, semantics, and content restrictions.
+
+By capturing this information in two compact files (the [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md) and the [script](https://%3Corg%3E.github.io/tidylake/scripts/index.md)), the framework can agnostically automate almost every step of the lifecycle:
+
+- **Execution:** Running the actual ETL/ELT processes.
+- **Discovery:** Syncing technical and business metadata into data catalogs and governance platforms.
+- **Observability:** Automatically generating lineage, provenance, and quality checks.
+- **Development:** Creating synthetic samples for testing and early-stage modeling.
+
+This approach provides data experts with a clear, unified view of their contracts and resources without the usual manual overhead.
+
+This approach provides data experts with a clear, unified view of their contracts and resources without the usual manual overhead.
+
+## Being framework agnostic
+
+We built tidylake to be flexible enough to accommodate the unique workflows and requirements of any data architecture or project.
+
+To achieve this, we intentionally avoid hard-coding framework integrations. Instead, we focus on providing the metadata structure and helpers needed to encapsulate your project, leaving the specific implementation details to your own code and extensions.
+
+We will now delve deeper into the core challenges tidylake addresses: bridging the gap between different personas and managing the complex lifecycle of a modern data lake.
+
+### The Notebook vs. Script Dilemma: Balancing Engineering and Analysis
+
+Data projects fail when they can't accommodate the different ways people work. Striking a balance between "production-ready" and "research-friendly" is notoriously difficult:
+
+- **The Engineering View:** DataOps and Data Engineers focus on productionizing complex workflows. They prioritize bug-free transformations, containers, and CI/CD pipelines. For them, scripts and version control are non-negotiable.
+- **The Analyst View**: Business-oriented analysts and scientists need to wrangle data to find value. They prioritize documentation, discovery, and fast iteration. For them, notebooks and interactive sessions are the natural habitat.
+
+These two approaches are often antagonistic. While [other tools](#alternatives) attempt to bridge this gap, they often impose rigid structures that are difficult for less technical users to adopt.
+
+tidylake overcomes this dilemma with three key principles:
+
+- **Uniform Code:** The exact same code is used for both batch and interactive runs. The framework handles the environment-specific outcomes automatically.
+- **Version Control First:** Code is stored in plain formats that are easily managed in Git.
+- **[Literate Programming](https://en.wikipedia.org/wiki/Literate_programming):** We keep logic plain and linear, mirroring the notebook experience. By avoiding deep nesting or complex class structures, we preserve the "beauty" and readability of the transformation logic.
+
+Check out how [script files](https://%3Corg%3E.github.io/tidylake/scripts/index.md) can be configured to see how these principles work in practice:
+
+- Helpers automate repetitive I/O while keeping code testable.
+- Transformations remain agnostic and free-form.
+- The Automatic Switch ensures your code "just works" whether you are in a production pipeline or a VS Code interactive window.
+
+### Managing Data, Metadata, and Code During the Lake's Lifecycle
+
+Most projects begin with a simple "read-transform-write" script. The real pain starts when you transition to a managed orchestration platform:
+
+- **The "Zero Day" Problem:** How do you develop when you can't access the original production datasets?
+- **Schema Evolution:** How do you safely branch your data lake to prepare for upcoming upstream changes?
+- **Testing:** Do you have a way to unit test your logic without hitting your real infrastructure?
+- **Coupling:** How tightly is your business logic tied to your orchestration tool (Airflow, Dagster, etc.)?
+
+Tidylake addresses these "DataOps" challenges by providing patterns that decouple your logic from your frameworks and infrastructure.
+
+#### Centralized Metadata Management
+
+In a modern lakehouse, metadata (names, types, descriptions) is everywhere: in your code, parquet files, SQL catalogs, BI tools, governance platforms and even in ML tools such as feature stores. Keeping these in sync manually is a recipe for disaster.
+
+We use a central [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md) as the single source of truth. This single file serves as a **contract** to automate several critical processes:
+
+Schema Enforcement & Quality
+
+Define your schema once. tidylake can be used to inject validation and quality checks directly into your workflow before data is even written by recalling the correct information when you need it.
+
+Automated Catalog Maintenance
+
+Using a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation), the CLI can automate table creation and schema evolution in your metastore. This separates your data lifecycle from your catalog maintenance—essential for modern formats like Delta Lake or Apache Iceberg.
+
+Testing with Synthetic Data
+
+Testing shouldn't require production data. tidylake can generate synthetic datasets directly from your manifest metadata, allowing you to run and test your transformation pipelines in a completely isolated environment.
+
+Orchestration Agnosticism
+
+tidylake provides a clean, graph-based SDK to invoke your data products. You can call your scripts directly from your orchestration code or via the CLI, ensuring your business logic remains independent of your scheduler.
+
+## Alternatives
+
+While we have used and enjoyed many of the following tools, we found that they often solve specific technical hurdles rather than the entire data product lifecycle.
+
+While we have used and enjoyed many of the following tools, we found that they often solve specific technical hurdles rather than the entire data product lifecycle.
+
+- [jupytext](https://jupytext.readthedocs.io/en/latest/): Excellent for pairing notebooks with version-control-friendly `.py` or `.md` files. However, it doesn't provide the metadata framework or the "Data Product" abstraction needed for governance.
+- [papermill](https://papermill.readthedocs.io/en/latest/): A powerful tool for parameterizing and running notebooks as batch jobs (a core philosophy of platforms like Databricks). While great for execution, it lacks a native way to manage schemas, lineage, or documentation outside of the notebook cells.
+- [nbdev](https://nbdev.fast.ai/): A sophisticated environment for developing Python packages entirely within notebooks, including tests and documentation. It is highly opinionated and powerful, but it can be a steep learning curve for teams that want to keep their metadata and transformation logic cleanly separated.
+
+**Why tidylake?**
+
+The main difference is focus. Most alternatives focus on **how you write code** (Notebook vs. Script). tidylake focuses on **what you are building** (the Data Product).
+
+By putting the metadata manifest at the center, we ensure that documentation, data quality, and schema evolution aren't "afterthoughts" added to a notebook—they are the foundation that the code is built upon.
+
+The context file is the entry point for every tidylake project. Whether you are using the [CLI](https://%3Corg%3E.github.io/tidylake/cli/index.md) or the [SDK](https://%3Corg%3E.github.io/tidylake/sdk/index.md), this file is the first thing parsed during a command or library import.
+
+It defines how the package behaves and can be extended with custom functionality through then [plugin system](https://%3Corg%3E.github.io/tidylake/plugins/overview/index.md).
+
+## Defining Your Data Products
+
+At its simplest, a valid context file requires only a project name and a list of your data product manifests:
+
+```
+tidylake:
+    name: TestContextFile
+    include_data_products:
+        - bronze_customers.yml
+        - silver_customers.yml
+        - gold_customers.yml
+```
+
+When this file is loaded, tidylake scans for the corresponding [manifest files](https://%3Corg%3E.github.io/tidylake/manifests/index.md). The only requirement is that these files exist and follow the standard YAML schema for manifests.
+
+### Building the Dependency DAG
+
+The order in which you list products in the context file **does not matter**. Instead, the execution order is determined by the internal dependencies defined within your [script files](https://%3Corg%3E.github.io/tidylake/scripts/index.md).
+
+Tidylake automatically builds a Directed Acyclic Graph (DAG) of your entire project. If it detects a dependency cycle (where Product A depends on Product B, which in turn depends on Product A), the system will fail early with a clear error.
+
+Keep it tidy!
+
+Because tidylake handles the execution order for you, you are free to organize the list in your context file alphabetically or by "tier" (Bronze, Silver, Gold) to make it easier for your team to maintain.
+
+## Context File Reference
+
+```
+tidylake:
+    type: object
+    properties:
+        name:
+            type: str
+            description: Name of your project
+        include_data_products:
+            type: array
+            description: List to the files of data product manifest to include in your project
+            items:
+                type: string
+        plugins:
+            type: object
+            description: Plugin Configuration
+            properties:
+                compute_engine:
+                    type: object
+                    description: Configuration for the compute engine plugin
+                    properties:
+                        plugin_path:
+                            type: string
+                            description: Path to the python file that defines the plugin. Takes precedence
+                        plugin_module: 
+                            type: string
+                            description: Path to the python module that contains the plugin
+                        plugin_class_name: 
+                            type: string
+                            description: Name of the python path inside file or module
+```
+
+The manifests files are the soul of your tidylake project. They serve a dual purpose: it is the documentation for your business assets and the technical data contract enforced in your [script file](https://%3Corg%3E.github.io/tidylake/scripts/index.md).
+
+By centralizing this information, you enable several automated workflows:
+
+- **Validation:** Retrieve schema definitions during pipeline execution to enforce strict typing, mandatory fields, or regular expression checks.
+- **Testing:** Use the schema as the blueprint for [synthetic data generation in the compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data).
+- **Automation:** Feed product and column metadata directly into [catalog automations in the compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation) to keep your SQL metastore in sync with your code.
+
+## Manifest File Schema
+
+At a minimum, a manifest must include the data product's name and the path to its corresponding script file.
+
+```
+data_product:
+  name: 'bronze_customers' # (1)!
+  script: 'bronze_customers' # (2)!
+```
+
+1. **Name:** The unique identifier used to reference this product across the project.
+1. **Script:** The Python file containing the transformation logic.
+
+### Defining the Schema
+
+While the `schema` section is technically optional, we strongly recommend adding it to every data product. Even if you don't use the automated compute plugins, maintaining a schema manifest is a "gold standard" practice for documentation. It ensures that any team member—or any downstream tool—understands exactly what the data contains without having to read through lines of transformation code.
+
+Currently, tidylake uses a superset of [jsonschema](https://json-schema.org/) to define these structures.
+
+A Note on JSON Schema
+
+We are actively evaluating alternative formats to JSON Schema. While powerful, it can sometimes be challenging to map perfectly across every compute engine (like Spark vs. Snowflake) and storage format.
+
+```
+data_product:
+  name: 'bronze_customers'
+  script: 'bronze_customers'
+  schema:
+    type: 'object'
+    properties:
+      customer__id:
+        type: 'string'
+      customer__name:
+        type: 'string'
+      customer__active:
+        type: 'boolean'
+      customer__city:
+        type: 'string'
+```
+
+The Script File is where the actual data transformation happens. It bridges the gap between tidylake's metadata management and your chosen processing framework (pandas, Spark, Polars, etc.).
+
+While tidylake automates the flow of metadata and enforces best practices,
+
+## Initializing a Data Product
+
+The only mandatory step in any script is loading the data product context. This connects the script to its corresponding [manifest file](https://%3Corg%3E.github.io/tidylake/manifests/index.md).
+
+```
+from tidylake import get_or_create_context
+
+data_product = get_or_create_context().get_data_product("bronze_customers")
+```
+
+## The Data Product Lifecycle
+
+A typical script manages the following lifecycle stages:
+
+The main body of script will be dedicated to managing the data product lifecycle, which can contain some the following steps:
+
+- **Reading Inputs:** Loading dependency datasets.
+- **Transformation:** Implementing the business logic.
+- **Validation:** Running data quality and schema checks.
+- **Writing Outputs:** Persisting the result to storage via Sinks.
+
+### Reading data
+
+Reading data through tidylake provides several benefits:
+
+- **Implicit Lineage:** Automatically builds your [dependency DAG](https://%3Corg%3E.github.io/tidylake/context/#dag).
+- **Environment Agnosticism:** Reproduce code across local and cloud environments via [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md).
+- **Simplified Testing:** Automatically swap real data for synthetic data during development.
+
+#### Option A: Explicit Input
+
+Use this for specific data origins or smaller projects without a compute plugin.
+
+```
+@data_product.add_input() # (1)!
+def bronze_customers(): # (2)!
+    return pd.read_parquet("s3://my-bucket/bronze_customers")
+
+df_bronze_profile = bronze_profile()
+```
+
+1. This decorator registers the function as a dependency, handling the metadata link transparently.
+1. We recommend setting the name of the data product as the name of the function, the library will look for a manifest file with the same name. You can also set the name manually (see data product API definition)
+
+#### Option B: Plugin-managed Input (Recommended)
+
+If you use a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md), your code becomes much leaner. This simpler one liner will handle everything mentioned under the hood:
+
+```
+df_bronze_customers = data_product.read_input("bronze_customers")
+```
+
+This one liner will handle everything mentioned under the hood.
+
+#### Extra: External/Raw Data
+
+For data not managed by a tidylake manifest (e.g., raw logs), use the `raw=True` flag. This option will not look for a manifest file inside your project:
+
+```
+@data_product.add_input(raw=True)
+def raw_customers():
+    return pd.read_parquet("s3://my-bucket/raw-customers.json")
+
+df_raw_customers = raw_customers()
+```
+
+### Logging Data Quality
+
+> WIP
+
+### Writing Data (Sinks)
+
+In tidylake, writing data is handled through a **sink**. Unlike a standard function call that executes immediately, a sink allows you to define how data should be serialized while deferring the execution to the framework's controller.
+
+This abstraction handles several critical tasks under the hood:
+
+- **Execution Safety:** It prevents "side effects" (writing data) during development. Sinks are automatically disabled when running in [interactive mode](#script-vs-interactive) or during unit tests, providing a safe playground where you can run your script repeatedly without polluting production storage.
+- **Engine Encapsulation:** Like the reading helpers, Sinks can be managed by a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md). This ensures that your serialization logic (paths, credentials, and formats) is reproducible across different environments (e.g., local Parquet vs. S3 Delta Lake).
+
+### Option A: Defining a Data Sink Directly
+
+By wrapping your serialization code in the `@data_product.set_sink()` decorator, you are telling tidylake: *"This is how I want to save my data, but only execute this when I explicitly run the pipeline."*
+
+In a data product script, serialization will only occur when the script is invoked via the run command in the CLI or the SDK.
+
+```
+df_bronze_customers = ... # (1)!
+
+@data_product.set_sink() # (2)!
+def write_bronze_customers():
+    return df_bronze_customers.to_parquet("/tmp/bronze_customers", index=False)
+```
+
+1. **Agnostic Logic:** You can reference any variable (like a DataFrame) defined earlier in your script. This keeps your core transformation logic completely independent of the storage implementation.
+1. **Deferred Execution:** This decorator ensures the function is registered but not executed during standard script imports or interactive kernel runs.
+
+### Option B: Plugin-managed Sink
+
+To maximize the framework's power, we recommend using the compute plugin to manage sinks. This removes hardcoded paths and formats from your scripts entirely.
+
+By using this one-liner, you ensure that the same script can write to a local directory for a developer and a governed production table for the DataOps team, all controlled by the framework's configuration.
+
+```
+data_product.set_output_data(df_silver_customers)
+```
+
+## Script vs. Interactive Mode
+
+Tidylake is designed to solve the [the Notebook vs. Script Dilemma](https://%3Corg%3E.github.io/tidylake/design-principles/#batch-vs-interactive). By using our helpers and following this methodology, you gain a seamless experience where the same file serves two masters: the analyst's curiosity and the engineer's rigour.
+
+#### How it works
+
+Internally, the package detects whether you are running the code as a standalone script (via the CLI `run` command or the SDK) or within a REPL/Interactive kernel (such as a Jupyter Notebook or an IPython session).
+
+Tidylake prioritizes developer experience. It provides helpers to automatically display data previews, enables [synthetic data generation](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data) for rapid prototyping, and—most importantly—disables sinks to prevent accidental writes.
+
+We recommend developing your pipelines interactively to iterate quickly, then promoting that exact same code base to production. This "One Code Base" approach eliminates the errors typically introduced when "translating" a notebook into a production script.
+
+### Reference Examples
+
+While you can use standard .ipynb notebooks, we often use [vscode jupyter code cells](https://code.visualstudio.com/docs/python/jupyter-support-py#_jupyter-code-cells) (# %%) in our [demos](https://%3Corg%3E.github.io/tidylake/demos/demos/index.md). This format allows the file to remain a plain Python script while offering a notebook-like interface.
+
+#### Example I: Compute plugin managed
+
+```
+# %%
+from tidylake import get_or_create_context
+
+data_product = get_or_create_context().get_data_product("silver_customers")
+
+# %%
+df_bronze_customers = data_product.read_input("bronze_customers")
+
+# %%
+df_silver_customers = df_bronze_customers.rename(
+    columns={
+        "customer__id": "customer_id",
+        "customer__name": "customer_name",
+        "customer__active": "customer_active",
+        "customer__city": "customer_city",
+    }
+)
+
+# %%
+data_product.set_output_data(df_silver_customers)
+```
+
+Complete example
+
+See complete example in context in the [pandas pyiceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+
+#### Example II: No compute plugin
+
+```
+# %%
+import pandas as pd
+
+from tidylake import get_or_create_context
+
+data_product = get_or_create_context().get_data_product("silver_customers")
+
+# %%
+@data_product.add_input()
+def bronze_customers():
+    return pd.read_parquet("/tmp/bronze_customers")
+
+
+df_bronze_customers = bronze_customers()
+
+# %%
+@data_product.add_input()
+def bronze_profile():
+    return pd.read_parquet("/tmp/bronze_profile")
+
+df_bronze_profile = bronze_profile()
+
+# %%
+df_silver_customers = (
+    df_bronze_customers.loc[lambda df: df["customer__active"]]
+    .merge(df_bronze_profile, left_on="customer__id", right_on="profile__id", how="left")
+    .rename(
+        columns={
+            "customer__id": "customer_id",
+            "customer__name": "customer_name",
+            "customer__city": "customer_city",
+            "profile__account": "customer_account",
+        }
+    )
+    .assign(
+        customer_city=lambda df: df["customer_city"].str.upper(),
+        customer_name=lambda df: df["customer_name"].str.title(),
+    )
+    .sort_values(by="customer_id")[["customer_id", "customer_name", "customer_city", "customer_account"]]
+)
+
+# %%
+@data_product.set_sink()
+def write_silver_customers():
+    return df_silver_customers.to_parquet("/tmp/silver_customers", index=False)
+```
+
+Complete example
+
+See complete example in context in the [pandas local demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-local/index.md).
+
+## WIP
+
+By design, tidylake only provides the core "orchestration of metadata" through [context](https://%3Corg%3E.github.io/tidylake/context/index.md), [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md), and [script](https://%3Corg%3E.github.io/tidylake/scripts/index.md) files. Our objective is to provide a methodology for managing complex data platforms without becoming a bottleneck for your technology choices.
+
+We intentionally leave infrastructure-specific functionality to the user. It is impossible to provide a "one-size-fits-all" solution for every combination of Spark, Snowflake, S3, or BigQuery. Instead, we provide the ports, and you (or our community) provide the adapters.
+
+## Architecture: Ports and Adapters
+
+This design follows the **Hexagonal Architecture** (or Ports and Adapters) pattern. In this model:
+
+- **The Core:** Your data product definitions and transformation logic remain agnostic of the underlying infrastructure.
+- **The Ports:** Tidylake defines "ports"—interfaces for common tasks like reading data, writing data, or updating a catalog.
+- **The Adapters (Plugins):** These are the specific implementations that connect your core to the outside world (e.g., a "Spark-S3 Adapter" or a "DuckDB-Local Adapter").
+
+This approach respects the **Open-Closed Principle**: tidylake is open for extension (you can add any technology via plugins) but closed for modification (you never have to change the core tidylake engine to support a new database).
+
+## Currently Supported Plugins
+
+### Compute Engine
+
+The [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md) manages the end-to-end lifecycle of data serialization and storage. It handles:
+
+- **I/O Operations:** Abstracting the complexity of reading/writing from object storage (S3/Azure/GCS) or OLAP databases.
+- **Catalog Automation:** Automatically managing schema definitions in metastores (Hive, AWS Glue) for formats like Parquet, Delta Lake, or Apache Iceberg.
+- **Synthetic Data:** Providing framework-specific adapters to generate test data directly into your dataframes for prototyping.
+
+### Data Quality Tracker (WIP)
+
+A non-opinionated tracker designed to manage logs, alerts, and statistics generated during data profiling and validation. This plugin acts as the bridge between your execution pipeline and your governance/observability platforms.
+
+## How the Plugin System Works
+
+Tidylake defines plugins as abstract classes. To use them, you—or a community-provided package—simply implement the required methods. These implementations can reside in external dependencies, or directly within your project as `.py` files or local modules.
+
+To activate a plugin, reference it in your [context file](https://%3Corg%3E.github.io/tidylake/context/index.md). Tidylake will dynamically load the module and inject it into your data product lifecycle.
+
+Because the context file is flexible, you can also include arbitrary properties required by your specific implementation (such as API keys, environment flags, or storage paths).
+
+The **Compute Engine Plugin** is the primary driver of automation in the tidylake ecosystem. It bridges the gap between your metadata definitions and your actual storage and compute infrastructure.
+
+While the core library handles the "logic" of your DAG, this plugin handles the "physics" of reading, writing, and maintaining your data lakehouse.
+
+## Plugin Configuration
+
+### Adapter Implementation
+
+To use this plugin, you must implement the [ComputeEnginePlugin](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/index.md) abstract class. This adapter serves as the translator between tidylake and your specific stack (e.g., Spark, Snowflake, or Pandas + Iceberg).
+
+### Context Configuration
+
+Register your implementation in the [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) so the framework can discover it at runtime:
+
+```
+tidylake:
+    ...
+    plugins: # (1)!
+        type: object
+        description: Plugin Configuration
+        properties:
+            compute_engine: # (2)!
+                type: object
+                description: Configuration for the compute engine plugin
+                properties:
+                    plugin_path: # (3)!
+                        type: string
+                        description: Path to the python file that defines the plugin. Takes precedence
+                    plugin_module: # (4)!
+                        type: string
+                        description: Path to the python module that contains the plugin
+                    plugin_class_name: # (5)!
+                        type: string
+                        description: Name of the python path inside file or module
+                    # (6)!
+```
+
+1. Add a `plugins` section
+1. Create the `compute_engine` property
+1. Set either `plugin_path` or `plugin_module`
+1. Set either `plugin_path` or `plugin_module`
+1. Set your `plugin_class_name`
+1. You can define additional custom properties for your custom implementation
+
+See Real-World Implementations
+
+Check the [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md) or the [pyspark demo](https://%3Corg%3E.github.io/tidylake/demos/pyspark/index.md) for complete, production-ready adapter code.
+
+## Initialization
+
+Your adapter must implement an `__init__` function. This is where you set up global state, such as attaching to an existing Spark session, authenticating with cloud providers (AWS/Azure/GCP), or initializing local catalog connections.
+
+```
+class PandasIcebergComputeEnginePlugin(ComputeEnginePlugin):
+    def __init__(self, compute_engine_config: dict = None):
+        super().__init__()
+
+        warehouse_path = compute_engine_config.get("warehouse_path") # (1)!
+        self.namespace = compute_engine_config.get("namespace", "default")
+
+        os.makedirs(warehouse_path, exist_ok=True) # (2)!
+        self.catalog = load_catalog(
+            "default",
+            **{
+                "type": "sql",
+                "uri": f"sqlite:///{warehouse_path}/pyiceberg_catalog.db",
+                "warehouse": f"file://{warehouse_path}",
+            },
+        )
+
+        self.catalog.create_namespace_if_not_exists(self.namespace)
+```
+
+1. Load config values from the context file
+1. Init required sessions or temporary files for the process
+
+Complete Example
+
+This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+
+## Data Serialization & Deserialization
+
+The adapter's primary job is to handle how data products are retrieved and persisted. You must implement the [`read_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.read_dataset) and [`write_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.write_dataset) methods.
+
+- **Reading:** Logic to load a table from a metastore (like Hive or Glue), query a warehouse (BigQuery, Snowflake) or read a plain file from an object store (S3, ADLS, GCS).
+- **Writing:** Logic to serialize data to a specific format (Parquet, Delta, Iceberg) and update the corresponding catalog table via your framework serialization API or SQL statements.
+
+```
+def read_dataset(self, name: str):
+    return self.catalog.load_table(f"{self.namespace}.{name}").scan().to_pandas() # (1)!
+
+def write_dataset(self, name: str, df):
+    table = self.catalog.load_table(f"{self.namespace}.{name}")
+    df_arrow = pa.Table.from_pandas(df)
+    table.overwrite(df_arrow)
+```
+
+1. Reuse existing sessions from the initialization
+
+Complete Example
+
+This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+
+## Other Methods
+
+Check the plugin implementation for other optional methods that can be added to the adapter such as the [`display_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.display_dataset) that will improve how the dataset is visualized during interactive mode or with the `peek` cli command.
+
+## Schema Automation
+
+Tidylake promotes a methodology that separates the lifecycle of data from the lifecycle of schemas. We recommend defining your "Data Contract" (the schema) in the manifest first. This enables several "Shift-Left" data engineering practices:
+
+- **Schema Enforcement:** Prevent pipeline bugs by enforcing strict typing on write.
+- **Safe Development:** Use [synthetic data](#synthetic-data) generation in early development or when real-world data access is restricted.
+- **Evolution Management:** Use the CLI to track and apply changes to your catalog tables.
+
+### Schema translation
+
+To automate your catalog, the adapter must know how to translate tidylake [manifest types](https://%3Corg%3E.github.io/tidylake/manifests/#defining-the-schema) (based on JSON Schema) into your engine's native types (e.g., PyArrow or Spark Types).
+
+You must implement:
+
+- [`get_schema_from_catalog`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.get_schema_from_catalog): Retrieve the current native schema as a dictionary.
+- [`manifest_schema_to_engine_schema`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.manifest_schema_to_engine_schema): Convert a manifest definition into your catalog’s API format.
+- [`engine_schema_to_manifest_schema`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.engine_schema_to_manifest_schema): Convert a physical catalog schema back into tidylake’s manifest format.
+
+```
+def get_schema_from_catalog(self, name: str):
+    table = self.catalog.load_table(f"{self.namespace}.{name}") # (1)!
+    arrow_schema = table.schema()
+
+    return self.engine_schema_to_manifest_schema(arrow_schema)
+
+def manifest_schema_to_engine_schema(self, manifest_schema: str):
+    fields = []
+    for name, prop in manifest_schema.get("properties", {}).items():
+        jtype = prop.get("type", "string")
+        pa_type = JSONSCHEMA_PYARROW_MAPPING.get(jtype, pa.string()) # (2)!
+        # nullable = True if not required
+        nullable = name not in manifest_schema.get("required", [])
+        fields.append(pa.field(name, pa_type, nullable=nullable))
+
+    return pa.schema(fields)
+
+def engine_schema_to_manifest_schema(self, catalog_schema: pa.Schema):
+    return {
+        "type": "object",
+        "properties": {
+            field.name: {"type": PYARROW_JSONSCHEMA_MAPPING.get(str(field.field_type), "string")}
+            for field in catalog_schema.columns
+        },
+    }
+```
+
+1. Just uses the native API
+1. This is just a dict mapping. Check it out in the full example.
+
+Complete Example
+
+This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+
+### Schema Manipulation
+
+Once translation is handled, you implement the methods that actually touch the infrastructure: [`check_catalog_exists`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.check_catalog_exists), [`create_table`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.create_table), and the *alter table* suite ([`alter_table_add_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_add_column), [`alter_table_drop_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_drop_column), or [`alter_table_alter_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_alter_column)).
+
+```
+def check_catalog_exists(self, name: str):
+    return self.catalog.table_exists(f"{self.namespace}.{name}")
+
+
+def create_table(self, name: str, manifest_schema: str):
+    catalog_schema = self.manifest_schema_to_engine_schema(manifest_schema)
+
+    self.catalog.create_table(
+        f"{self.namespace}.{name}",
+        schema=catalog_Schema,
+    )
+
+
+def alter_table_add_column(self, table_name: str, column_name: str, column_type: str):
+        table = self.catalog.load_table(f"{self.namespace}.{table_name}")
+        with table.update_schema() as update:
+            update.add_column(
+                column_name,
+                JSONSCHEMA_PYICEBERG_MAPPING.get(column_type, StringType()),
+            )
+
+
+def alter_table_drop_column(self, table_name: str, column_name: str):
+    table = self.catalog.load_table(f"{self.namespace}.{table_name}")
+    with table.update_schema() as update:
+        update.delete_column(column_name)
+
+
+def alter_table_alter_column(self, table_name: str, column_name: str, column_type: str):
+    table = self.catalog.load_table(f"{self.namespace}.{table_name}")
+    with table.update_schema() as update:
+        update.update_column(
+            column_name,
+            JSONSCHEMA_PYICEBERG_MAPPING.get(column_type, StringType()),
+        )
+```
+
+### Managing the Schema Lifecycle via CLI
+
+With your adapter in place, you can use the CLI to maintain your data lakehouse without writing manual statements.
+
+#### Step 1: Detect Discrepancies
+
+Running [`tidylake schema diff`](https://%3Corg%3E.github.io/tidylake/cli/#schema-diff) compares your manifest files against the actual physical tables in your catalog.
+
+Run it by yourself by following the example
+
+These commands are being run over the [pandas pyiceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+
+```
+$ tidylake schema diff
+
+                       bronze_customers
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column           ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer__city   │ string         │ <missing>      │ ADD    │
+│ customer__active │ boolean        │ <missing>      │ ADD    │
+│ customer__id     │ string         │ <missing>      │ ADD    │
+│ customer__name   │ string         │ <missing>      │ ADD    │
+└──────────────────┴────────────────┴────────────────┴────────┘
+                       silver_customers
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column          ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer_active │ boolean        │ <missing>      │ ADD    │
+│ customer_city   │ string         │ <missing>      │ ADD    │
+│ customer_name   │ string         │ <missing>      │ ADD    │
+│ customer_id     │ string         │ <missing>      │ ADD    │
+└─────────────────┴────────────────┴────────────────┴────────┘
+```
+
+### Step 2: Apply Changes
+
+Use the [`tidylake schema update`](https://%3Corg%3E.github.io/tidylake/cli/#schema-update) command to align the catalog with your manifests. We recommend a "Dry Run" first, followed by a `--commit` once you have verified the changes.
+
+```
+$ tidylake schema update --data-product bronze_customers
+⚡️ Updating/Creating schema for data product: bronze_customers
+Table bronze_customers does not exist. A new table will be created.
+Dry run mode, not creating table.
+```
+
+```
+$ tidylake schema update --data-product bronze_customers --commit
+⚡️ Updating/Creating schema for data product: bronze_customers
+Table bronze_customers does not exist. A new table will be created.
+```
+
+Now that the table has been created, we can run `tidylake schema diff` again to sverifyee the changes in our catalog:
+
+```
+$ tidylake schema diff
+                       bronze_customers
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column           ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer__id     │ string         │ string         │ OK     │
+│ customer__active │ boolean        │ boolean        │ OK     │
+│ customer__city   │ string         │ string         │ OK     │
+│ customer__name   │ string         │ string         │ OK     │
+└──────────────────┴────────────────┴────────────────┴────────┘
+                       silver_customers
+┏━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column          ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer_active │ boolean        │ <missing>      │ ADD    │
+│ customer_city   │ string         │ <missing>      │ ADD    │
+│ customer_name   │ string         │ <missing>      │ ADD    │
+│ customer_id     │ string         │ <missing>      │ ADD    │
+└─────────────────┴────────────────┴────────────────┴────────┘
+```
+
+If you later modify a manifest file, running `tidylake schema diff` will detect the drift; running `tidylake schema update --commit` will apply the necessary commands automatically.
+
+```
+$ tidylake schema diff --data-product bronze_customers
+                       bronze_customers
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column           ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer__active │ boolean        │ boolean        │ OK     │
+│ customer__city   │ <missing>      │ string         │ DROP   │
+│ customer__email  │ string         │ <missing>      │ ADD    │
+│ customer__id     │ string         │ string         │ OK     │
+│ customer__name   │ string         │ string         │ OK     │
+└──────────────────┴────────────────┴────────────────┴────────┘
+```
+
+```
+$ tidylake schema update --data-product bronze_customers --commit
+⚡️ Updating/Creating schema for data product: bronze_customers
+Schema changes for table bronze_customers:
+ADD    customer__email      string
+DROP   customer__city       None
+```
+
+```
+$ tidylake schema diff --data-product bronze_customers
+                       bronze_customers
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┓
+┃ column           ┃ defined_schema ┃ catalog_schema ┃ status ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━┩
+│ customer__email  │ string         │ string         │ OK     │
+│ customer__active │ boolean        │ boolean        │ OK     │
+│ customer__id     │ string         │ string         │ OK     │
+│ customer__name   │ string         │ string         │ OK     │
+└──────────────────┴────────────────┴────────────────┴────────┘
+```
+
+Now you are ready to run the script files and start working with your data.
+
+## Working with synthetic data
+
+> WIP

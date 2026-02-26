@@ -1,0 +1,107 @@
+site_name: tidylake
+site_url: https://<org>.github.io/tidylake/
+repo_url: https://github.com/demosense/tidylake
+copyright: "© Taidy Innovación SL. 2025 to present."
+nav:
+  - index.md
+  - installation.md
+  - Documentation:
+    - cli.md
+    - Core Concepts:
+      - design-principles.md
+      - context.md
+      - manifests.md
+      - scripts.md
+      - sdk.md
+    - Plugins:
+      - plugins/overview.md
+      - plugins/compute-engine.md
+  - Examples and Tutorials:
+    - Complete Demos:
+      - demos/demos.md
+      - demos/pandas-local.md
+      - demos/pandas-pyiceberg.md
+      - demos/pyspark.md
+  - API Reference:
+    - tidylake:
+      - api/tidylake.md
+      - api/tidy-lake-context.md
+      - api/data-product.md
+      - api/compute-engine-plugin.md
+
+markdown_extensions:
+  - admonition
+  - attr_list # Enable attribute lists for markdown elements
+  - md_in_html # Allow markdown inside HTML blocks
+  - pymdownx.highlight # Enhanced code block highlighting
+  - pymdownx.snippets # Enable including snippets of other files
+  - material.extensions.preview # Enable content preview feature
+  - pymdownx.superfences: # Advanced fenced code blocks
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+# extra:
+#   # hide the "Made with Material for MkDocs" message
+#   generator: false
+
+extra_css:
+  - "extra/tweaks.css"
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: teal
+  font:
+    text: Prompt
+  logo: "img/favicon.webp"
+  favicon: "img/favicon.webp"
+
+  features:
+    - announce.dismiss
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tooltips
+    - navigation.indexes
+    - navigation.paths
+    - navigation.sections
+    - navigation.tracking
+    - navigation.instant.preview
+    - toc.follow
+    - search.suggest
+    - search.highlight
+
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src/tidylake]
+          options:
+            show_source: true
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            relative_crossrefs: true
+            heading_level: 3
+  - llmstxt:
+      full_output: llms-full.txt
+      markdown_description: Long description of my project.
+      sections:
+        Summary of the library:
+          - index.md
+        Detailed Instructions:
+          - cli.md
+          - design-principles.md
+          - context.md
+          - manifests.md
+          - scripts.md
+          - sdk.md
+          - plugins/overview.md
+          - plugins/compute-engine.md
