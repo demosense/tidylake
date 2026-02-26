@@ -6,11 +6,11 @@ While the core library handles the "logic" of your DAG, this plugin handles the 
 
 ### Adapter Implementation
 
-To use this plugin, you must implement the [ComputeEnginePlugin](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/index.md) abstract class. This adapter serves as the translator between tidylake and your specific stack (e.g., Spark, Snowflake, or Pandas + Iceberg).
+To use this plugin, you must implement the [ComputeEnginePlugin](https://github.com/demosense/tidylake/api/compute-engine-plugin/index.md) abstract class. This adapter serves as the translator between tidylake and your specific stack (e.g., Spark, Snowflake, or Pandas + Iceberg).
 
 ### Context Configuration
 
-Register your implementation in the [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) so the framework can discover it at runtime:
+Register your implementation in the [context file](https://github.com/demosense/tidylake/context/index.md) so the framework can discover it at runtime:
 
 ```
 tidylake:
@@ -44,7 +44,7 @@ tidylake:
 
 See Real-World Implementations
 
-Check the [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md) or the [pyspark demo](https://%3Corg%3E.github.io/tidylake/demos/pyspark/index.md) for complete, production-ready adapter code.
+Check the [pandas pyceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md) or the [pyspark demo](https://github.com/demosense/tidylake/demos/pyspark/index.md) for complete, production-ready adapter code.
 
 ## Initialization
 
@@ -76,11 +76,11 @@ class PandasIcebergComputeEnginePlugin(ComputeEnginePlugin):
 
 Complete Example
 
-This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+This is an excerpt from [pandas pyceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md).
 
 ## Data Serialization & Deserialization
 
-The adapter's primary job is to handle how data products are retrieved and persisted. You must implement the [`read_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.read_dataset) and [`write_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.write_dataset) methods.
+The adapter's primary job is to handle how data products are retrieved and persisted. You must implement the [`read_dataset`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.read_dataset) and [`write_dataset`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.write_dataset) methods.
 
 - **Reading:** Logic to load a table from a metastore (like Hive or Glue), query a warehouse (BigQuery, Snowflake) or read a plain file from an object store (S3, ADLS, GCS).
 - **Writing:** Logic to serialize data to a specific format (Parquet, Delta, Iceberg) and update the corresponding catalog table via your framework serialization API or SQL statements.
@@ -99,11 +99,11 @@ def write_dataset(self, name: str, df):
 
 Complete Example
 
-This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+This is an excerpt from [pandas pyceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md).
 
 ## Other Methods
 
-Check the plugin implementation for other optional methods that can be added to the adapter such as the [`display_dataset`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.display_dataset) that will improve how the dataset is visualized during interactive mode or with the `peek` cli command.
+Check the plugin implementation for other optional methods that can be added to the adapter such as the [`display_dataset`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.display_dataset) that will improve how the dataset is visualized during interactive mode or with the `peek` cli command.
 
 ## Schema Automation
 
@@ -115,13 +115,13 @@ Tidylake promotes a methodology that separates the lifecycle of data from the li
 
 ### Schema translation
 
-To automate your catalog, the adapter must know how to translate tidylake [manifest types](https://%3Corg%3E.github.io/tidylake/manifests/#defining-the-schema) (based on JSON Schema) into your engine's native types (e.g., PyArrow or Spark Types).
+To automate your catalog, the adapter must know how to translate tidylake [manifest types](https://github.com/demosense/tidylake/manifests/#defining-the-schema) (based on JSON Schema) into your engine's native types (e.g., PyArrow or Spark Types).
 
 You must implement:
 
-- [`get_schema_from_catalog`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.get_schema_from_catalog): Retrieve the current native schema as a dictionary.
-- [`manifest_schema_to_engine_schema`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.manifest_schema_to_engine_schema): Convert a manifest definition into your catalog’s API format.
-- [`engine_schema_to_manifest_schema`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.engine_schema_to_manifest_schema): Convert a physical catalog schema back into tidylake’s manifest format.
+- [`get_schema_from_catalog`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.get_schema_from_catalog): Retrieve the current native schema as a dictionary.
+- [`manifest_schema_to_engine_schema`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.manifest_schema_to_engine_schema): Convert a manifest definition into your catalog’s API format.
+- [`engine_schema_to_manifest_schema`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.engine_schema_to_manifest_schema): Convert a physical catalog schema back into tidylake’s manifest format.
 
 ```
 def get_schema_from_catalog(self, name: str):
@@ -156,11 +156,11 @@ def engine_schema_to_manifest_schema(self, catalog_schema: pa.Schema):
 
 Complete Example
 
-This is an excerpt from [pandas pyceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+This is an excerpt from [pandas pyceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md).
 
 ### Schema Manipulation
 
-Once translation is handled, you implement the methods that actually touch the infrastructure: [`check_catalog_exists`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.check_catalog_exists), [`create_table`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.create_table), and the *alter table* suite ([`alter_table_add_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_add_column), [`alter_table_drop_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_drop_column), or [`alter_table_alter_column`](https://%3Corg%3E.github.io/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_alter_column)).
+Once translation is handled, you implement the methods that actually touch the infrastructure: [`check_catalog_exists`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.check_catalog_exists), [`create_table`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.create_table), and the *alter table* suite ([`alter_table_add_column`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_add_column), [`alter_table_drop_column`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_drop_column), or [`alter_table_alter_column`](https://github.com/demosense/tidylake/api/compute-engine-plugin/#tidylake.plugins.compute_engine.ComputeEnginePlugin.alter_table_alter_column)).
 
 ```
 def check_catalog_exists(self, name: str):
@@ -206,11 +206,11 @@ With your adapter in place, you can use the CLI to maintain your data lakehouse 
 
 #### Step 1: Detect Discrepancies
 
-Running [`tidylake schema diff`](https://%3Corg%3E.github.io/tidylake/cli/#schema-diff) compares your manifest files against the actual physical tables in your catalog.
+Running [`tidylake schema diff`](https://github.com/demosense/tidylake/cli/#schema-diff) compares your manifest files against the actual physical tables in your catalog.
 
 Run it by yourself by following the example
 
-These commands are being run over the [pandas pyiceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+These commands are being run over the [pandas pyiceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md).
 
 ```
 $ tidylake schema diff
@@ -237,7 +237,7 @@ $ tidylake schema diff
 
 ### Step 2: Apply Changes
 
-Use the [`tidylake schema update`](https://%3Corg%3E.github.io/tidylake/cli/#schema-update) command to align the catalog with your manifests. We recommend a "Dry Run" first, followed by a `--commit` once you have verified the changes.
+Use the [`tidylake schema update`](https://github.com/demosense/tidylake/cli/#schema-update) command to align the catalog with your manifests. We recommend a "Dry Run" first, followed by a `--commit` once you have verified the changes.
 
 ```
 $ tidylake schema update --data-product bronze_customers

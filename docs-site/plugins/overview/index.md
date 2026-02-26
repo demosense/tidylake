@@ -1,4 +1,4 @@
-By design, tidylake only provides the core "orchestration of metadata" through [context](https://%3Corg%3E.github.io/tidylake/context/index.md), [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md), and [script](https://%3Corg%3E.github.io/tidylake/scripts/index.md) files. Our objective is to provide a methodology for managing complex data platforms without becoming a bottleneck for your technology choices.
+By design, tidylake only provides the core "orchestration of metadata" through [context](https://github.com/demosense/tidylake/context/index.md), [manifest](https://github.com/demosense/tidylake/manifests/index.md), and [script](https://github.com/demosense/tidylake/scripts/index.md) files. Our objective is to provide a methodology for managing complex data platforms without becoming a bottleneck for your technology choices.
 
 We intentionally leave infrastructure-specific functionality to the user. It is impossible to provide a "one-size-fits-all" solution for every combination of Spark, Snowflake, S3, or BigQuery. Instead, we provide the ports, and you (or our community) provide the adapters.
 
@@ -16,7 +16,7 @@ This approach respects the **Open-Closed Principle**: tidylake is open for exten
 
 ### Compute Engine
 
-The [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md) manages the end-to-end lifecycle of data serialization and storage. It handles:
+The [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md) manages the end-to-end lifecycle of data serialization and storage. It handles:
 
 - **I/O Operations:** Abstracting the complexity of reading/writing from object storage (S3/Azure/GCS) or OLAP databases.
 - **Catalog Automation:** Automatically managing schema definitions in metastores (Hive, AWS Glue) for formats like Parquet, Delta Lake, or Apache Iceberg.
@@ -30,6 +30,6 @@ A non-opinionated tracker designed to manage logs, alerts, and statistics genera
 
 Tidylake defines plugins as abstract classes. To use them, you—or a community-provided package—simply implement the required methods. These implementations can reside in external dependencies, or directly within your project as `.py` files or local modules.
 
-To activate a plugin, reference it in your [context file](https://%3Corg%3E.github.io/tidylake/context/index.md). Tidylake will dynamically load the module and inject it into your data product lifecycle.
+To activate a plugin, reference it in your [context file](https://github.com/demosense/tidylake/context/index.md). Tidylake will dynamically load the module and inject it into your data product lifecycle.
 
 Because the context file is flexible, you can also include arbitrary properties required by your specific implementation (such as API keys, environment flags, or storage paths).

@@ -1,6 +1,6 @@
-The context file is the entry point for every tidylake project. Whether you are using the [CLI](https://%3Corg%3E.github.io/tidylake/cli/index.md) or the [SDK](https://%3Corg%3E.github.io/tidylake/sdk/index.md), this file is the first thing parsed during a command or library import.
+The context file is the entry point for every tidylake project. Whether you are using the [CLI](https://github.com/demosense/tidylake/cli/index.md) or the [SDK](https://github.com/demosense/tidylake/sdk/index.md), this file is the first thing parsed during a command or library import.
 
-It defines how the package behaves and can be extended with custom functionality through then [plugin system](https://%3Corg%3E.github.io/tidylake/plugins/overview/index.md).
+It defines how the package behaves and can be extended with custom functionality through then [plugin system](https://github.com/demosense/tidylake/plugins/overview/index.md).
 
 ## Defining Your Data Products
 
@@ -15,11 +15,11 @@ tidylake:
         - gold_customers.yml
 ```
 
-When this file is loaded, tidylake scans for the corresponding [manifest files](https://%3Corg%3E.github.io/tidylake/manifests/index.md). The only requirement is that these files exist and follow the standard YAML schema for manifests.
+When this file is loaded, tidylake scans for the corresponding [manifest files](https://github.com/demosense/tidylake/manifests/index.md). The only requirement is that these files exist and follow the standard YAML schema for manifests.
 
 ### Building the Dependency DAG
 
-The order in which you list products in the context file **does not matter**. Instead, the execution order is determined by the internal dependencies defined within your [script files](https://%3Corg%3E.github.io/tidylake/scripts/index.md).
+The order in which you list products in the context file **does not matter**. Instead, the execution order is determined by the internal dependencies defined within your [script files](https://github.com/demosense/tidylake/scripts/index.md).
 
 Tidylake automatically builds a Directed Acyclic Graph (DAG) of your entire project. If it detects a dependency cycle (where Product A depends on Product B, which in turn depends on Product A), the system will fail early with a clear error.
 

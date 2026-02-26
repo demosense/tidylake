@@ -4,16 +4,16 @@ Long description of my project.
 
 ## Summary of the library
 
-- [Getting Started](https://<org>.github.io/tidylake/index.md)
+- [Getting Started](https://github.com/demosense/tidylake/index.md)
 
 ## Detailed Instructions
 
-- [CLI](https://<org>.github.io/tidylake/cli/index.md)
-- [Design principles](https://<org>.github.io/tidylake/design-principles/index.md)
-- [Context File](https://<org>.github.io/tidylake/context/index.md)
-- [Manifest Files](https://<org>.github.io/tidylake/manifests/index.md)
-- [Script Files](https://<org>.github.io/tidylake/scripts/index.md)
-- [SDK](https://<org>.github.io/tidylake/sdk/index.md)
-- [Plugin System Overview](https://<org>.github.io/tidylake/plugins/overview/index.md)
-- [Compute Engine Plugin](https://<org>.github.io/tidylake/plugins/compute-engine/index.md)
+- [CLI](https://github.com/demosense/tidylake/cli/index.md)
+- [Design principles](https://github.com/demosense/tidylake/design-principles/index.md)
+- [Context File](https://github.com/demosense/tidylake/context/index.md)
+- [Manifest Files](https://github.com/demosense/tidylake/manifests/index.md)
+- [Script Files](https://github.com/demosense/tidylake/scripts/index.md)
+- [SDK](https://github.com/demosense/tidylake/sdk/index.md)
+- [Plugin System Overview](https://github.com/demosense/tidylake/plugins/overview/index.md)
+- [Compute Engine Plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md)
 

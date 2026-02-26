@@ -1,4 +1,4 @@
-As established in our [getting started](https://%3Corg%3E.github.io/tidylake/index.md) guide, the primary objective of tidylake is to solve the **Data Platform Balancing Act**.
+As established in our [getting started](https://github.com/demosense/tidylake/index.md) guide, the primary objective of tidylake is to solve the **Data Platform Balancing Act**.
 
 We built tidylake based on lessons learned from countless data pipeline projects and after testing a myriad of [other frameworks](#alternatives). This methodology isn't just about a specific tool; it’s a set of principles for building and maintaining a sustainable Data Lake (or Lakehouse), regardless of your chosen framework or infrastructure.
 
@@ -16,7 +16,7 @@ When building tidylake, we chose this term intentionally. We aren't just buildin
 1. **Metadata:** That explains what the data means and how it should be used.
 1. **Contracts:** Explicit definitions that combine strict typing, semantics, and content restrictions.
 
-By capturing this information in two compact files (the [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md) and the [script](https://%3Corg%3E.github.io/tidylake/scripts/index.md)), the framework can agnostically automate almost every step of the lifecycle:
+By capturing this information in two compact files (the [manifest](https://github.com/demosense/tidylake/manifests/index.md) and the [script](https://github.com/demosense/tidylake/scripts/index.md)), the framework can agnostically automate almost every step of the lifecycle:
 
 - **Execution:** Running the actual ETL/ELT processes.
 - **Discovery:** Syncing technical and business metadata into data catalogs and governance platforms.
@@ -50,7 +50,7 @@ tidylake overcomes this dilemma with three key principles:
 - **Version Control First:** Code is stored in plain formats that are easily managed in Git.
 - **[Literate Programming](https://en.wikipedia.org/wiki/Literate_programming):** We keep logic plain and linear, mirroring the notebook experience. By avoiding deep nesting or complex class structures, we preserve the "beauty" and readability of the transformation logic.
 
-Check out how [script files](https://%3Corg%3E.github.io/tidylake/scripts/index.md) can be configured to see how these principles work in practice:
+Check out how [script files](https://github.com/demosense/tidylake/scripts/index.md) can be configured to see how these principles work in practice:
 
 - Helpers automate repetitive I/O while keeping code testable.
 - Transformations remain agnostic and free-form.
@@ -71,7 +71,7 @@ Tidylake addresses these "DataOps" challenges by providing patterns that decoupl
 
 In a modern lakehouse, metadata (names, types, descriptions) is everywhere: in your code, parquet files, SQL catalogs, BI tools, governance platforms and even in ML tools such as feature stores. Keeping these in sync manually is a recipe for disaster.
 
-We use a central [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md) as the single source of truth. This single file serves as a **contract** to automate several critical processes:
+We use a central [manifest](https://github.com/demosense/tidylake/manifests/index.md) as the single source of truth. This single file serves as a **contract** to automate several critical processes:
 
 Schema Enforcement & Quality
 
@@ -79,7 +79,7 @@ Define your schema once. tidylake can be used to inject validation and quality c
 
 Automated Catalog Maintenance
 
-Using a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation), the CLI can automate table creation and schema evolution in your metastore. This separates your data lifecycle from your catalog maintenance—essential for modern formats like Delta Lake or Apache Iceberg.
+Using a [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/#schema-automation), the CLI can automate table creation and schema evolution in your metastore. This separates your data lifecycle from your catalog maintenance—essential for modern formats like Delta Lake or Apache Iceberg.
 
 Testing with Synthetic Data
 

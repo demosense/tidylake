@@ -1,10 +1,10 @@
-The manifests files are the soul of your tidylake project. They serve a dual purpose: it is the documentation for your business assets and the technical data contract enforced in your [script file](https://%3Corg%3E.github.io/tidylake/scripts/index.md).
+The manifests files are the soul of your tidylake project. They serve a dual purpose: it is the documentation for your business assets and the technical data contract enforced in your [script file](https://github.com/demosense/tidylake/scripts/index.md).
 
 By centralizing this information, you enable several automated workflows:
 
 - **Validation:** Retrieve schema definitions during pipeline execution to enforce strict typing, mandatory fields, or regular expression checks.
-- **Testing:** Use the schema as the blueprint for [synthetic data generation in the compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data).
-- **Automation:** Feed product and column metadata directly into [catalog automations in the compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation) to keep your SQL metastore in sync with your code.
+- **Testing:** Use the schema as the blueprint for [synthetic data generation in the compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/#synthetic-data).
+- **Automation:** Feed product and column metadata directly into [catalog automations in the compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/#schema-automation) to keep your SQL metastore in sync with your code.
 
 ## Manifest File Schema
 

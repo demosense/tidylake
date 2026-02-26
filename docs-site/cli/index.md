@@ -1,14 +1,14 @@
-Tidylake's CLI can help you manage and automate your project, as al alternative you can also interact directly from python using the [SDK](https://%3Corg%3E.github.io/tidylake/sdk/index.md).
+Tidylake's CLI can help you manage and automate your project, as al alternative you can also interact directly from python using the [SDK](https://github.com/demosense/tidylake/sdk/index.md).
 
 ## Basic commands
 
-These commands need to be launched from a tidylake project, for that you must create a valid [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) that points to one or more data product [manifest files](https://%3Corg%3E.github.io/tidylake/manifests/index.md).
+These commands need to be launched from a tidylake project, for that you must create a valid [context file](https://github.com/demosense/tidylake/context/index.md) that points to one or more data product [manifest files](https://github.com/demosense/tidylake/manifests/index.md).
 
 Every command looks for a `tidylake.yml` file on the root folder of your project, but you can modify this path with the `--file` argument.
 
 ### list
 
-Lists the defined data products by following the internal [DAG ordering](https://%3Corg%3E.github.io/tidylake/context/#dag). Several options can be configured to obtain richer representation of the graph to improve visualization or include in documentations.
+Lists the defined data products by following the internal [DAG ordering](https://github.com/demosense/tidylake/context/#dag). Several options can be configured to obtain richer representation of the graph to improve visualization or include in documentations.
 
 ```
 Usage: tidylake list [OPTIONS]

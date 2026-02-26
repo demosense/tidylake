@@ -21,17 +21,17 @@ We bridge the gap between governance documentation and process execution without
 
 ## Your first project
 
-Follow this minimal example to understand the [core mechanics](https://%3Corg%3E.github.io/tidylake/design-principles/index.md) of a tidylake project.
+Follow this minimal example to understand the [core mechanics](https://github.com/demosense/tidylake/design-principles/index.md) of a tidylake project.
 
-In this guide, we will build a single [data product](https://%3Corg%3E.github.io/tidylake/design-principles/#data-product), the fundamental building block of tidylake. It is an abstraction that allows you to define where your data comes from and what it should look like (metadata), then "wire it up" to your actual processing logic using our helpers.
+In this guide, we will build a single [data product](https://github.com/demosense/tidylake/design-principles/#data-product), the fundamental building block of tidylake. It is an abstraction that allows you to define where your data comes from and what it should look like (metadata), then "wire it up" to your actual processing logic using our helpers.
 
 The Philosophy: Organization over Interference
 
-tidylake is an unopinionated framework. By structuring your scripts and defining your data products, you unlock powerful tooling and automation. However, tidylake does not modify your data or add features to your processing engine (like [pandas](https://pandas.pydata.org) in this example) or filesystem. It is designed for organization and governance, leaving the data processing entirely to you. Our [plugin system](https://%3Corg%3E.github.io/tidylake/plugins/overview/index.md) allows you for more flexibility and integration of your chosen framework.
+tidylake is an unopinionated framework. By structuring your scripts and defining your data products, you unlock powerful tooling and automation. However, tidylake does not modify your data or add features to your processing engine (like [pandas](https://pandas.pydata.org) in this example) or filesystem. It is designed for organization and governance, leaving the data processing entirely to you. Our [plugin system](https://github.com/demosense/tidylake/plugins/overview/index.md) allows you for more flexibility and integration of your chosen framework.
 
 ### The Manifest File
 
-Every data product begins with a [manifest](https://%3Corg%3E.github.io/tidylake/manifests/index.md). This is a standardized YAML schema that acts as the "source of truth" for your metadata.
+Every data product begins with a [manifest](https://github.com/demosense/tidylake/manifests/index.md). This is a standardized YAML schema that acts as the "source of truth" for your metadata.
 
 silver_customers.yaml
 
@@ -62,7 +62,7 @@ data_product:
 
 ### The Context File
 
-Tidylake uses a global [context file](https://%3Corg%3E.github.io/tidylake/context/index.md) to discover which data products belong to your project. The following is a minimal example including the previous data product.
+Tidylake uses a global [context file](https://github.com/demosense/tidylake/context/index.md) to discover which data products belong to your project. The following is a minimal example including the previous data product.
 
 ```
 tidylake:
@@ -124,7 +124,7 @@ Scaling your project is simply a matter of repeating this three-step workflow fo
 
 Run the complete example yourself
 
-The snippets above are simplified for clarity. You can find the full, runnable project—including the sample data and all five data products [here](https://%3Corg%3E.github.io/tidylake/demos/pandas-local/index.md).
+The snippets above are simplified for clarity. You can find the full, runnable project—including the sample data and all five data products [here](https://github.com/demosense/tidylake/demos/pandas-local/index.md).
 
 The Medallion Architecture
 
@@ -132,13 +132,13 @@ In the following examples, you will see us using terms like *Bronze*, *Silver*, 
 
 ### Using tidylake's Tooling
 
-Once your project is structured, tidylake unlocks powerful automation and safety features via its [Command Line Interface (CLI)](https://%3Corg%3E.github.io/tidylake/cli/index.md).
+Once your project is structured, tidylake unlocks powerful automation and safety features via its [Command Line Interface (CLI)](https://github.com/demosense/tidylake/cli/index.md).
 
 #### Introspect the Lineage Graph
 
 Tidylake parses your scripts to build an internal Directed Acyclic Graph (DAG). It automatically detects dependencies by looking at which products are used as inputs for others.
 
-Use the [tidylake list](https://%3Corg%3E.github.io/tidylake/cli/#list) command to see your data products in their correct execution order:
+Use the [tidylake list](https://github.com/demosense/tidylake/cli/#list) command to see your data products in their correct execution order:
 
 ```
 uv run tidylake list
@@ -151,7 +151,7 @@ uv run tidylake list
 
 Automatic DAG Validation
 
-The order above is determined by script dependencies, not the order in your configuration file. Tidylake ensures the graph is valid and will fail early if it detects circular dependencies. Learn more about [detecting data product dependencies](https://%3Corg%3E.github.io/tidylake/context/#dag).
+The order above is determined by script dependencies, not the order in your configuration file. Tidylake ensures the graph is valid and will fail early if it detects circular dependencies. Learn more about [detecting data product dependencies](https://github.com/demosense/tidylake/context/#dag).
 
 You can also generate a visual representation of your pipeline using [Mermaid](https://mermaid.ai) syntax:
 
@@ -174,7 +174,7 @@ flowchart TD
 
 During testing, in production or in CI/CD environments, you will run the project in batch mode. This tells tidylake to execute the scripts in order and activates all Sinks to write data to your storage layer.
 
-Use the [tidylake run](https://%3Corg%3E.github.io/tidylake/cli/#run) command to run the entire project or a specific subset:
+Use the [tidylake run](https://github.com/demosense/tidylake/cli/#run) command to run the entire project or a specific subset:
 
 ```
 $ tidylake run
@@ -191,7 +191,7 @@ One of the most powerful features of tidylake is its "*context awareness*." You 
 
 When tidylake detects an interactive session, it shifts into safety mode:
 
-- **Disabled Sinks:** The [`sink`](https://%3Corg%3E.github.io/tidylake/scripts/#writing-data) functions are bypassed. You can run your script as many times as you like without accidentally overwriting production data or creating "spurious" files.
+- **Disabled Sinks:** The [`sink`](https://github.com/demosense/tidylake/scripts/#writing-data) functions are bypassed. You can run your script as many times as you like without accidentally overwriting production data or creating "spurious" files.
 - **Quiet Logging:** Production-level logging is silenced to keep your console clean for development.
 
 This allows you to develop logic interactively while retaining the exact same code that will eventually run in production as a scheduled batch job, see more by reading the (notebook vs script dilemma)[#batch-vs-interactive] design principle.
@@ -204,10 +204,10 @@ While we use .py files with [vscode jupyter code cells](https://code.visualstudi
 
 You have now seen the core mechanics of tidylake: linking metadata to logic and managing execution contexts.
 
-However, there is much more to explore. You can continue through the guide in order (start with the [core concepts guide](https://%3Corg%3E.github.io/tidylake/design-principles/index.md)), or jump straight into the features that interest you most:
+However, there is much more to explore. You can continue through the guide in order (start with the [core concepts guide](https://github.com/demosense/tidylake/design-principles/index.md)), or jump straight into the features that interest you most:
 
-- Go beyond basic pandas, learn how to create a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md) to encapsulate I/O operations, enable [schema automation](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#schema-automation) for your data lake, or generate [synthetic data](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data) directly from your manifests for rapid testing.
+- Go beyond basic pandas, learn how to create a [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md) to encapsulate I/O operations, enable [schema automation](https://github.com/demosense/tidylake/plugins/compute-engine/#schema-automation) for your data lake, or generate [synthetic data](https://github.com/demosense/tidylake/plugins/compute-engine/#synthetic-data) directly from your manifests for rapid testing.
 - **(WIP)** Discover how to implement and log data quality tests as a native part of your product lifecycle.
 - **(WIP)** See how to export your tidylake DAG and integrate it seamlessly with orchestration engines like Airflow, Dagster, or Prefect.
 
-You can also go straight to the [demos](https://%3Corg%3E.github.io/tidylake/demos/demos/index.md) to see examples of complete projects for a variety of frameworks.
+You can also go straight to the [demos](https://github.com/demosense/tidylake/demos/demos/index.md) to see examples of complete projects for a variety of frameworks.

@@ -4,7 +4,7 @@ While tidylake automates the flow of metadata and enforces best practices,
 
 ## Initializing a Data Product
 
-The only mandatory step in any script is loading the data product context. This connects the script to its corresponding [manifest file](https://%3Corg%3E.github.io/tidylake/manifests/index.md).
+The only mandatory step in any script is loading the data product context. This connects the script to its corresponding [manifest file](https://github.com/demosense/tidylake/manifests/index.md).
 
 ```
 from tidylake import get_or_create_context
@@ -27,8 +27,8 @@ The main body of script will be dedicated to managing the data product lifecycle
 
 Reading data through tidylake provides several benefits:
 
-- **Implicit Lineage:** Automatically builds your [dependency DAG](https://%3Corg%3E.github.io/tidylake/context/#dag).
-- **Environment Agnosticism:** Reproduce code across local and cloud environments via [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md).
+- **Implicit Lineage:** Automatically builds your [dependency DAG](https://github.com/demosense/tidylake/context/#dag).
+- **Environment Agnosticism:** Reproduce code across local and cloud environments via [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md).
 - **Simplified Testing:** Automatically swap real data for synthetic data during development.
 
 #### Option A: Explicit Input
@@ -48,7 +48,7 @@ df_bronze_profile = bronze_profile()
 
 #### Option B: Plugin-managed Input (Recommended)
 
-If you use a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md), your code becomes much leaner. This simpler one liner will handle everything mentioned under the hood:
+If you use a [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md), your code becomes much leaner. This simpler one liner will handle everything mentioned under the hood:
 
 ```
 df_bronze_customers = data_product.read_input("bronze_customers")
@@ -79,7 +79,7 @@ In tidylake, writing data is handled through a **sink**. Unlike a standard funct
 This abstraction handles several critical tasks under the hood:
 
 - **Execution Safety:** It prevents "side effects" (writing data) during development. Sinks are automatically disabled when running in [interactive mode](#script-vs-interactive) or during unit tests, providing a safe playground where you can run your script repeatedly without polluting production storage.
-- **Engine Encapsulation:** Like the reading helpers, Sinks can be managed by a [compute engine plugin](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/index.md). This ensures that your serialization logic (paths, credentials, and formats) is reproducible across different environments (e.g., local Parquet vs. S3 Delta Lake).
+- **Engine Encapsulation:** Like the reading helpers, Sinks can be managed by a [compute engine plugin](https://github.com/demosense/tidylake/plugins/compute-engine/index.md). This ensures that your serialization logic (paths, credentials, and formats) is reproducible across different environments (e.g., local Parquet vs. S3 Delta Lake).
 
 ### Option A: Defining a Data Sink Directly
 
@@ -110,19 +110,19 @@ data_product.set_output_data(df_silver_customers)
 
 ## Script vs. Interactive Mode
 
-Tidylake is designed to solve the [the Notebook vs. Script Dilemma](https://%3Corg%3E.github.io/tidylake/design-principles/#batch-vs-interactive). By using our helpers and following this methodology, you gain a seamless experience where the same file serves two masters: the analyst's curiosity and the engineer's rigour.
+Tidylake is designed to solve the [the Notebook vs. Script Dilemma](https://github.com/demosense/tidylake/design-principles/#batch-vs-interactive). By using our helpers and following this methodology, you gain a seamless experience where the same file serves two masters: the analyst's curiosity and the engineer's rigour.
 
 #### How it works
 
 Internally, the package detects whether you are running the code as a standalone script (via the CLI `run` command or the SDK) or within a REPL/Interactive kernel (such as a Jupyter Notebook or an IPython session).
 
-Tidylake prioritizes developer experience. It provides helpers to automatically display data previews, enables [synthetic data generation](https://%3Corg%3E.github.io/tidylake/plugins/compute-engine/#synthetic-data) for rapid prototyping, and—most importantly—disables sinks to prevent accidental writes.
+Tidylake prioritizes developer experience. It provides helpers to automatically display data previews, enables [synthetic data generation](https://github.com/demosense/tidylake/plugins/compute-engine/#synthetic-data) for rapid prototyping, and—most importantly—disables sinks to prevent accidental writes.
 
 We recommend developing your pipelines interactively to iterate quickly, then promoting that exact same code base to production. This "One Code Base" approach eliminates the errors typically introduced when "translating" a notebook into a production script.
 
 ### Reference Examples
 
-While you can use standard .ipynb notebooks, we often use [vscode jupyter code cells](https://code.visualstudio.com/docs/python/jupyter-support-py#_jupyter-code-cells) (# %%) in our [demos](https://%3Corg%3E.github.io/tidylake/demos/demos/index.md). This format allows the file to remain a plain Python script while offering a notebook-like interface.
+While you can use standard .ipynb notebooks, we often use [vscode jupyter code cells](https://code.visualstudio.com/docs/python/jupyter-support-py#_jupyter-code-cells) (# %%) in our [demos](https://github.com/demosense/tidylake/demos/demos/index.md). This format allows the file to remain a plain Python script while offering a notebook-like interface.
 
 #### Example I: Compute plugin managed
 
@@ -151,7 +151,7 @@ data_product.set_output_data(df_silver_customers)
 
 Complete example
 
-See complete example in context in the [pandas pyiceberg demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-pyiceberg/index.md).
+See complete example in context in the [pandas pyiceberg demo](https://github.com/demosense/tidylake/demos/pandas-pyiceberg/index.md).
 
 #### Example II: No compute plugin
 
@@ -205,4 +205,4 @@ def write_silver_customers():
 
 Complete example
 
-See complete example in context in the [pandas local demo](https://%3Corg%3E.github.io/tidylake/demos/pandas-local/index.md).
+See complete example in context in the [pandas local demo](https://github.com/demosense/tidylake/demos/pandas-local/index.md).
