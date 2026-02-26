@@ -10,7 +10,7 @@ vars:
   DEPLOY_ID: "" # Unique identifier for the deployment
   AWS_PROFILE: "" # Optional AWS CLI profile
   VENV: .venv
-  DOCS_SITE_DIR: site
+  DOCS_SITE_DIR: docs-site
 
 env:
   UV_CACHE_DIR: .uv-cache
