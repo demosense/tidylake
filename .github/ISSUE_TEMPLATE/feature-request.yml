@@ -2,6 +2,7 @@ name: 🚀 Feature Request
 description: Suggest an idea or improvement
 title: "[Feature]: "
 labels: ["enhancement"]
+type: bug
 assignees: []
 
 body:
