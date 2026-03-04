@@ -162,6 +162,7 @@ def test_run_with_compute_engine_writes_dataset():
     """Test run with compute engine writes dataset."""
     data_product = DataProduct(name="test_data_product", schema={}, script="package.module")
     engine = Mock()
+    engine.get_schema_from_catalog.return_value = {"catalog": "schema"}
     data_product.set_compute_engine(engine)
     data_product.set_output_data("test_data")
 
@@ -174,10 +175,31 @@ def test_run_with_compute_engine_writes_dataset():
     engine.write_dataset.assert_called_once_with("test_data_product", "test_data")
 
 
+def test_run_with_compute_engine_writes_dataset_outdated_schema():
+    """Test run with compute engine tries to write a dataset,
+    but fails because schemas (manifest and catalog) differ."""
+    # define schemas with differences
+    manifest_schema = {"properties": {"id": {"type": "string"}}}
+    catalog_schema = {"properties": {"id": {"type": "integer"}}}
+    data_product = DataProduct(name="test_data_product", schema=manifest_schema, script="package.module")
+    engine = Mock()
+    engine.get_schema_from_catalog.return_value = catalog_schema
+    data_product.set_compute_engine(engine)
+    data_product.set_output_data("test_data")
+
+    with (
+        patch("tidylake.core.data_product.execution_mode", "script"),
+        patch("tidylake.core.data_product.importlib.import_module"),
+        pytest.raises(RuntimeError, match="Catalog schema is not updated according to manifest schema."),
+    ):
+        data_product.run()
+
+
 def test_run_with_compute_engine_missing_output():
     """Test run with compute engine but no output data raises error."""
     data_product = DataProduct(name="test_data_product", schema={}, script="package.module")
     engine = Mock()
+    engine.get_schema_from_catalog.return_value = {"catalog": "schema"}
     data_product.set_compute_engine(engine)
 
     with (
