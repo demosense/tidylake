@@ -63,17 +63,35 @@ def list(
 def run(
     file: str | None = OPTION_FILE,
     data_product: str | None = typer.Option(None, help="Specific data product to run"),
-    continue_run: bool | None = typer.Option(False, help="Continue from the last data product"),
+    upstream: bool | None = typer.Option(
+        False,
+        "--upstream",
+        help="Run all the upstream data products that are related to the one specified by --data-product",
+    ),
+    downstream: bool | None = typer.Option(
+        False,
+        "--downstream",
+        help="Run all the downstream data products that are related to the one specified by --data-product",
+    ),
 ):
     """Execute pipeline or individual data product.
 
     Args:
         file: Path to the configuration YAML file.
-        data product: Name of specific data product to execute. If None, runs entire pipeline.
-        continue_run: Continue execution from the last completed data product.
+        data_product: Name of specific data product to execute. If None, runs entire pipeline.
+        upstream: Runs all the upstream data products that are related to
+        the one specified by --data-product
+        downstream: Runs all the downstream data products that are related
+        to the one specified by --data-product
     """
+    if (upstream or downstream) and not data_product:
+        raise typer.BadParameter("Using --upstream or --downstream requires --data-product to be specified.")
+
+    if upstream and downstream:
+        raise typer.BadParameter("--upstream and --downstream are mutually exclusive.")
+
     context = create_context_from_config(file)
-    context.run(name=data_product, continue_run=continue_run)
+    context.run(name=data_product, upstream=upstream, downstream=downstream)
 
 
 @app.command()

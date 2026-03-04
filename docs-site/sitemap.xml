@@ -2,74 +2,74 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://github.com/demosense/tidylake/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/cli/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/context/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/design-principles/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/installation/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/manifests/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/scripts/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/sdk/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/api/compute-engine-plugin/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/api/data-product/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/api/tidy-lake-context/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/api/tidylake/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/demos/demos/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/demos/pandas-local/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/demos/pandas-pyiceberg/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/demos/pyspark/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/plugins/compute-engine/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
     <url>
          <loc>https://github.com/demosense/tidylake/plugins/overview/</loc>
-         <lastmod>2026-02-26</lastmod>
+         <lastmod>2026-03-04</lastmod>
     </url>
 </urlset>

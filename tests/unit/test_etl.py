@@ -133,12 +133,12 @@ def test_run_single_data_product():
     context.add_data_product(data_product)
 
     with patch.object(context, "get_graph_sequence", return_value=["test_data_product"]):
-        context.run("test_data_product", continue_run=False)
+        context.run("test_data_product")
 
     data_product.run.assert_called_once()
 
 
-def test_run_continue_from_data_product():
+def test_run_downstream_from_data_product():
     """Test running from specific data_product onwards."""
     context = TidyLakeContext(name="test_context")
     data_product1 = Mock(spec=DataProduct)
@@ -146,14 +146,33 @@ def test_run_continue_from_data_product():
     data_product1.inputs = []
     data_product2 = Mock(spec=DataProduct)
     data_product2.name = "data_product2"
-    data_product2.inputs = []
+    data_product2.inputs = ["data_product1"]
     context.add_data_product(data_product1)
     context.add_data_product(data_product2)
 
     with patch.object(context, "get_graph_sequence", return_value=["data_product1", "data_product2"]):
-        context.run("data_product2", continue_run=True)
+        context.run("data_product1", downstream=True)
 
-    data_product1.run.assert_not_called()
+    data_product1.run.assert_called_once()
+    data_product2.run.assert_called_once()
+
+
+def test_run_upstream_from_data_product():
+    """Test running from specific data_product backwards."""
+    context = TidyLakeContext(name="test_context")
+    data_product1 = Mock(spec=DataProduct)
+    data_product1.name = "data_product1"
+    data_product1.inputs = []
+    data_product2 = Mock(spec=DataProduct)
+    data_product2.name = "data_product2"
+    data_product2.inputs = ["data_product1"]
+    context.add_data_product(data_product1)
+    context.add_data_product(data_product2)
+
+    with patch.object(context, "get_graph_sequence", return_value=["data_product1", "data_product2"]):
+        context.run("data_product2", upstream=True)
+
+    data_product1.run.assert_called_once()
     data_product2.run.assert_called_once()
 
 
@@ -282,7 +301,7 @@ def test_run_no_data_products_in_sequence():
     context = TidyLakeContext(name="test_context")
 
     with patch.object(context, "get_graph_sequence", return_value=[]):
-        context.run(None, continue_run=False)
+        context.run(None)
 
     # Should complete without error
 
@@ -292,6 +311,6 @@ def test_run_data_product_not_in_sequence():
     context = TidyLakeContext(name="test_context")
 
     with patch.object(context, "get_graph_sequence", return_value=["other_data_product"]):
-        context.run("missing_data_product", continue_run=False)
+        context.run("missing_data_product")
 
     # Should run from index 0 when data_product not found

@@ -63,7 +63,7 @@ def test_run_command_default():
         result = runner.invoke(app, ["run"])
 
         assert result.exit_code == 0
-        mock_context.run.assert_called_once_with(name=None, continue_run=False)
+        mock_context.run.assert_called_once_with(name=None, upstream=False, downstream=False)
 
 
 def test_run_command_with_data_product():
@@ -76,20 +76,33 @@ def test_run_command_with_data_product():
         result = runner.invoke(app, ["run", "--data-product", "test_data_product"])
 
         assert result.exit_code == 0
-        mock_context.run.assert_called_once_with(name="test_data_product", continue_run=False)
+        mock_context.run.assert_called_once_with(name="test_data_product", downstream=False, upstream=False)
 
 
-def test_run_command_continue():
+def test_run_command_downstream():
+    """Test run command with downstream flag."""
+    with patch("tidylake.cli.commands.create_context_from_config") as mock_create:
+        mock_context = Mock()
+        mock_create.return_value = mock_context
+
+        runner = CliRunner()
+        result = runner.invoke(app, ["run", "--data-product", "test_data_product", "--downstream"])
+
+        assert result.exit_code == 0
+        mock_context.run.assert_called_once_with(name="test_data_product", downstream=True, upstream=False)
+
+
+def test_run_command_upstream():
     """Test run command with continue flag."""
     with patch("tidylake.cli.commands.create_context_from_config") as mock_create:
         mock_context = Mock()
         mock_create.return_value = mock_context
 
         runner = CliRunner()
-        result = runner.invoke(app, ["run", "--continue-run"])
+        result = runner.invoke(app, ["run", "--data-product", "test_data_product", "--upstream"])
 
         assert result.exit_code == 0
-        mock_context.run.assert_called_once_with(name=None, continue_run=True)
+        mock_context.run.assert_called_once_with(name="test_data_product", upstream=True, downstream=False)
 
 
 def test_peek_command():

@@ -261,13 +261,11 @@ uv run tidylake run --help
 
  Execute pipeline or individual data product.
 
- Args:     file: Path to the configuration YAML file.     data product: Name of specific data product to execute. If None, runs entire pipeline.     continue_run:
- Continue execution from the last completed data product.
-
 ╭─ Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ --file                                 TEXT  Path to the YAML file defining processes [default: tidylake.yml]                                                      │
 │ --data-product                         TEXT  Specific data product to run                                                                                          │
-│ --continue-run    --no-continue-run          Continue from the last data product [default: no-continue-run]                                                        │
+| --upstream                                   Runs all the upstream data products that are related to the one specified by --data-product                           |
+| --downstream                                 Runs all the downstream data products that are related to the one specified by --data-product                         |
 │ --help                                       Show this message and exit.                                                                                           │
 ╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
 ```

@@ -157,6 +157,71 @@ class TidyLakeContext:
 
         return dict(self._dependencies)
 
+    def get_upstream(self, name: str) -> set[str]:
+        """
+        Get all the upstream dependencies for a given data product.
+
+        Args:
+            name (str): The name of the data product.
+
+        Returns:
+            set[str]: A set of upstream data product names.
+        """
+        if name not in self._dependencies:
+            return set()
+
+        upstream_nodes = []
+        nodes_to_visit = [name]
+        visited = set()
+
+        while nodes_to_visit:
+            current_node = nodes_to_visit.pop(0)
+            if current_node in visited:
+                continue
+
+            visited.add(current_node)
+            upstream_nodes.insert(0, current_node)
+
+            # Assuming self._dependencies stores node -> list of parents
+            parents = self._dependencies.get(current_node, [])
+            nodes_to_visit.extend(parents)
+        return upstream_nodes
+
+    def get_downstream(self, name: str) -> set[str]:
+        """
+        Get all the downstream dependencies for a given data product.
+
+        Args:
+            name (str): The name of the data product.
+
+        Returns:
+            set[str]: A set of downstream data product names.
+        """
+        # First, build the reverse dependency graph (dependents graph)
+        dependents = {node: [] for node in self._dependencies}
+        for node, dependencies in self._dependencies.items():
+            for dep in dependencies:
+                if dep in dependents:
+                    dependents[dep].append(node)
+
+        # Now, traverse the dependents graph to find all downstream nodes
+        downstream_nodes = []
+        nodes_to_visit = [name]
+        visited = set()
+
+        while nodes_to_visit:
+            current_node = nodes_to_visit.pop(0)
+            if current_node in visited:
+                continue
+
+            visited.add(current_node)
+            downstream_nodes.append(current_node)
+
+            if current_node in dependents:
+                nodes_to_visit.extend(dependents[current_node])
+
+        return downstream_nodes
+
     def run_data_product(self, name: str):
         """
         Run a specific data product by name.
@@ -172,25 +237,27 @@ class TidyLakeContext:
         else:
             print(f"Data product '{name}' is not defined")
 
-    def run(self, name: str, continue_run: bool = False) -> None:
+    def run(self, name: str = None, upstream: bool = False, downstream: bool = False) -> None:
         """
-        Run the process, given the initial conditions
+        Run the process, given the initial conditions.
 
         Args:
             name (str): The name of the data product to start from.
-            continue_run (bool): If True, continue from the last data product,
-                otherwise run a single data product.
+            upstream (bool): If True, run all upstream data products related to the one specified.
+            downstream (bool): If True, run all downstream data products related to the one specified.
         """
-
-        g = self.get_graph_sequence()
-
-        # get the index of the data product to continue from
-        data_product_idx = g.index(name) if name in g else 0
-
-        # if continue_run, we will run from the last data product else run a single data product
-        data_products = (
-            g[data_product_idx : data_product_idx + 1] if name and not continue_run else g[data_product_idx:]
-        )
+        if upstream:
+            data_products = self.get_upstream(name)
+        elif downstream:
+            data_products = self.get_downstream(name)
+        elif name is None:
+            data_products = self.get_graph_sequence()
+        else:
+            g = self.get_graph_sequence()
+            # get the index of the data product to continue from
+            data_product_idx = g.index(name) if name in g else 0
+            # just run single data product
+            data_products = g[data_product_idx : data_product_idx + 1]
 
         # run data products
         for s in data_products:

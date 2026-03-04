@@ -21,7 +21,7 @@ def test_pandas_local_demo_runs_successfully(monkeypatch, tmp_path):
     context_instance = get_or_create_context("tidylake.yml")
 
     # Run the pipeline
-    context_instance.run(name=None, continue_run=False)
+    context_instance.run(name=None)
 
     # Verify all data_products were added
     assert len(context_instance.data_products) == 4
@@ -49,7 +49,7 @@ def test_pandas_iceberg_local_demo_runs_successfully(monkeypatch, tmp_path):
     context_instance.schema_update(commit=True)
 
     # Run the pipeline
-    context_instance.run(name=None, continue_run=False)
+    context_instance.run(name=None)
 
     # Verify all data_products were added
     assert len(context_instance.data_products) == 2
