@@ -206,6 +206,21 @@ class DataProduct:
                                      Please set output_data when using a compute engine."
                     )
 
+                # Schema validation first
+                schemas = self.get_schemas()
+                defined_schema_props = schemas.get("defined_schema", {}).get("properties", {})
+                catalog_schema_props = schemas.get("catalog_schema", {}).get("properties", {})
+
+                all_keys = defined_schema_props.keys() | catalog_schema_props.keys()
+                for col in all_keys:
+                    def_type = defined_schema_props.get(col, {}).get("type", "<missing>")
+                    cat_type = catalog_schema_props.get(col, {}).get("type", "<missing>")
+                    if def_type != cat_type:
+                        raise RuntimeError(
+                            "Catalog schema is not updated according to manifest schema. "
+                            "Please update catalog before running data products."
+                        )
+                # Write dataset after schema validation
                 self.compute_engine.write_dataset(
                     self.name,
                     self.output_data,
