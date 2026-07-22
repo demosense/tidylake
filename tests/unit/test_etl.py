@@ -275,6 +275,38 @@ def test_schema_update_with_compute_engine():
     context.schema_update("test_data_product", commit=True)
 
     data_product.update_or_create_schema.assert_called_once_with(commit=True)
+    mock_engine.list_catalog_tables.assert_not_called()
+
+
+def test_schema_update_deletes_orphaned_tables():
+    """Test that a full schema update deletes catalog tables with no matching data product."""
+    context = TidyLakeContext(name="test_context")
+    mock_engine = Mock()
+    mock_engine.list_catalog_tables.return_value = ["test_data_product", "orphaned_table"]
+    context.compute_engine = mock_engine
+
+    data_product = Mock(spec=DataProduct)
+    data_product.name = "test_data_product"
+    data_product.inputs = []
+    data_product.compute_engine = mock_engine
+    data_product.schema = {"type": "object"}
+    context.add_data_product(data_product)
+
+    context.schema_update(commit=True)
+
+    mock_engine.delete_table.assert_called_once_with("orphaned_table")
+
+
+def test_schema_update_orphaned_tables_dry_run():
+    """Test that dry run mode does not delete orphaned tables."""
+    context = TidyLakeContext(name="test_context")
+    mock_engine = Mock()
+    mock_engine.list_catalog_tables.return_value = ["orphaned_table"]
+    context.compute_engine = mock_engine
+
+    context.schema_update(commit=False)
+
+    mock_engine.delete_table.assert_not_called()
 
 
 def test_run_no_data_products_in_sequence():

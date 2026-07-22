@@ -137,3 +137,9 @@ class PandasIcebergComputeEnginePlugin(ComputeEnginePlugin):
                 column_name,
                 JSONSCHEMA_PYICEBERG_MAPPING.get(column_type, StringType()),
             )
+
+    def list_catalog_tables(self) -> list[str]:
+        return [identifier[-1] for identifier in self.catalog.list_tables(self.namespace)]
+
+    def delete_table(self, name: str):
+        self.catalog.drop_table(f"{self.namespace}.{name}")

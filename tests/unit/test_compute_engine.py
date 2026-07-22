@@ -38,6 +38,12 @@ class DummyComputeEnginePlugin(ComputeEnginePlugin):
     def alter_table_alter_column(self, table_name: str, column_name: str, column_type: str):
         raise NotImplementedError
 
+    def list_catalog_tables(self):
+        raise NotImplementedError
+
+    def delete_table(self, name: str):
+        raise NotImplementedError
+
 
 def test_compute_changeset_detects_add_drop_alter():
     manifest = {

@@ -46,3 +46,9 @@ class FakeComputeEngine(ComputeEnginePlugin):
     def alter_table_alter_column(self, table_name: str, column_name: str, column_type: str):
         # Not implemented for the fake engine
         pass
+
+    def list_catalog_tables(self):
+        return list(self.datasets.keys())
+
+    def delete_table(self, name: str):
+        self.datasets.pop(name, None)

@@ -178,6 +178,26 @@ class ComputeEnginePlugin(ABC):
         """
         pass
 
+    @abstractmethod
+    def list_catalog_tables(self) -> list[str]:
+        """
+        List the names of all tables currently present in the compute engine catalog.
+
+        Returns:
+            list[str]: The names of the tables in the catalog.
+        """
+        pass
+
+    @abstractmethod
+    def delete_table(self, name: str):
+        """
+        Delete a table from the compute engine catalog.
+
+        Args:
+            name (str): The name of the table to delete.
+        """
+        pass
+
     @staticmethod
     def compute_changeset(manifest_schema: dict, catalog_schema: dict):
         manifest_props = manifest_schema.get("properties", {}) if manifest_schema else {}

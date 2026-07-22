@@ -142,3 +142,9 @@ class SparkComputeEnginePlugin(ComputeEnginePlugin):
             f"ALTER TABLE {table_name} CHANGE COLUMN {column_name} {column_name}\
                   {JSONSCHEMA_SPARK_MAPPING[column_type]}"
         )
+
+    def list_catalog_tables(self) -> list[str]:
+        return [table.name for table in self.spark.catalog.listTables()]
+
+    def delete_table(self, name: str):
+        self.spark.sql(f"DROP TABLE IF EXISTS {name}")

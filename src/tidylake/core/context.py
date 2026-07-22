@@ -300,6 +300,9 @@ class TidyLakeContext:
         """
         Update or create the schema in the compute engine catalog for the selected data products.
 
+        When updating all data products (name=None), tables that exist in the compute
+        engine catalog but no longer correspond to a defined data product are deleted.
+
         Args:
             name (str, optional): The name of a specific data product to update.
                 If None, update all data products. Defaults to None.
@@ -317,6 +320,39 @@ class TidyLakeContext:
             if data_product.compute_engine and data_product.schema:
                 print(f"⚡️ Updating/Creating schema for data product: {data_product.name}")
                 data_product.update_or_create_schema(commit=commit)
+
+        # Only prune orphaned tables on a full run, so updating a single data product
+        # never deletes tables belonging to data products outside the current scope.
+        if name is None:
+            self.schema_delete_orphaned_tables(commit=commit)
+
+    def schema_delete_orphaned_tables(self, commit: bool = False) -> None:
+        """
+        Delete tables from the compute engine catalog that no longer correspond to
+        a defined data product.
+
+        Args:
+            commit (bool): If True, delete the orphaned tables.
+                If False, only print what would be deleted.
+        """
+
+        if not self.compute_engine:
+            print("No compute engine configured, cannot check schema.")
+            return
+
+        catalog_tables = set(self.compute_engine.list_catalog_tables())
+        defined_tables = set(self.data_products.keys())
+
+        orphaned_tables = catalog_tables - defined_tables
+
+        for table_name in sorted(orphaned_tables):
+            print(f"⚡️ Table '{table_name}' has no matching data product and will be deleted.")
+
+            if not commit:
+                print("Dry run mode, not deleting table.")
+                continue
+
+            self.compute_engine.delete_table(table_name)
 
 
 def get_or_create_context(config_file_path: str = None) -> TidyLakeContext:
